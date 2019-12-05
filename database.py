@@ -11,7 +11,7 @@ Created on Tue Nov 20 15:06:15 2018
     
 import adjustTimeSeries as ats
 
-
+#alldData=ats.createFullBase([darwinPressure, darwinWaves,darwinWindSpeedMax,darwinWindSpeedAvg],['darwinPressure', 'darwinWaves','darwinWindSpeedMax','darwinWindSpeedAvg'])
 
 def loadDataBaseWaves():
     airPressure = [ 'https://s3-ap-southeast-2.amazonaws.com/imos-data/IMOS/ANMN/NRS/REAL_TIME/NRSDAR/air_pressure_channel_3050/2010/QAQC/IMOS_ANMN_M_20100209T201000Z_NRSDAR_FV01.nc',
