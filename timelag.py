@@ -71,11 +71,11 @@ def createFullBase3(data,classNames):
     for ff in range(0,len(data)):
         if frequency == data[ff].index[1] - data[ff].index[0]:
             temp1 = 1
-            while data[ff].index[-temp1] - minMaxDataa > (data[ff].index[1] - data[ff].index[0])/6:
+            while data[ff].index[-temp1] - minMaxDataa > (data[ff].index[1] - data[ff].index[0])/24:
                 temp1 = temp1 + 1
             minMaxData  = data[ff].index[-temp1]
             temp2 = 0 
-            while maxMinDataa - data[ff].index[temp2] > (data[ff].index[1] - data[ff].index[0])/6:
+            while maxMinDataa - data[ff].index[temp2] > (data[ff].index[1] - data[ff].index[0])/24:
                 temp2 = temp2 + 1
             maxMinData = data[ff].index[temp2]
     
@@ -87,11 +87,11 @@ def createFullBase3(data,classNames):
     for i in range(0,len(data)):
         for j in range(0,len(data[i].columns)):
             k = 1
-            while data[i].index[-k] - minMaxData > (data[i].index[1] - data[i].index[0])/6:
+            while data[i].index[-k] - minMaxData > (data[i].index[1] - data[i].index[0])/2:
                 k = k +1
             print((data[i].index[1] - data[i].index[0])/2)
             z = 0
-            while maxMinData -data[i].index[z] > (data[i].index[1] - data[i].index[0])/6:
+            while maxMinData -data[i].index[z] > (data[i].index[1] - data[i].index[0])/2:
                 z = z +1
             #print(z)
             #print(k)
