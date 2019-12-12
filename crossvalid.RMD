@@ -1,0 +1,405 @@
+---
+title: "crossvalid"
+author: "Connor Simpson"
+date: "11/12/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(forecast)
+library(Metrics)
+accuracy = forecast::accuracy
+```
+
+```{r}
+antidiff = function(orig,diffed){
+  return(orig[-length(orig)]+diffed)
+}
+```
+
+WMAPE
+REMOVE ABS ON SUM(TRU)
+```{r}
+WMAPE <- function(pred,tru){
+  WMAPE = sum(abs(pred-tru),na.rm = T)/sum(tru,na.rm = T)
+  return(WMAPE)
+}
+```
+
+
+reler
+```{r}
+reler <- function(pred,tru,bench){
+  reler = sum(abs(tru-pred),na.rm = T)/sum(abs(tru-bench),na.rm = T)
+  return(reler)
+}
+```
+
+rsq 
+```{r}
+rsq <- function(pred,tru){
+  SSE = sum((tru-pred)^2,na.rm = T)
+  SS = sum((tru-mean(na.omit(tru)))^2,na.rm = T)
+  rsq = 1- SSE/SS
+  return(rsq)
+}
+```
+
+
+adjr
+```{r}
+adjr <- function(pred,tru,coefnum){
+  rs = rsq(pred,tru)
+  n = length(pred)
+  adjr = 1-(1-rs)*(n-1)/(n-coefnum-1)
+  return(adjr)
+}
+```
+
+
+```{r}
+crossvalid <- function(ts,exog,k,h,order){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v+1
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    mod = Arima(train,order = order,xreg = trainx)
+    modt = Arima(test,model = mod,xreg=testx)
+    error[i+1] = accuracy(modt)[2]
+    coefnum = sum(order)
+    #pred = modt$fitted
+    #tru = test
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    pred[i+1] = modt$fitted
+    tru[i+1] = test
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  return(data.frame(pred,tru))
+}
+```
+
+rmse
+```{r}
+rootMSE = function(pred,tru){
+  return(sqrt(mean((pred-tru)^2,na.rm = T)))
+}
+```
+
+
+
+```{r}
+WWSH <- read.csv("WWSHWSPD.csv")
+head(WWSH)
+```
+
+
+```{r}
+ts = WWSH[,2]
+exog = data.frame(WWSH[,3:6])
+
+```
+
+```{r}
+plot.ts(exog)
+```
+
+
+```{r}
+aaaa=crossvalid(ts,exog,3,5,c(1,0,0))
+```
+
+```{r}
+aaaa[,1]
+```
+
+
+```{r}
+arsqa = c()
+rmsea = c()
+WMAPEa = c()
+relera = c()
+coefnum = 1
+for (i in (1:(length(aaaa)/2))){
+  pred = aaaa[,i]
+  tru = aaaa[,(length(aaaa)/2+i)]
+  arsqa[i] = adjr(pred,tru,coefnum)
+  WMAPEa[i] = WMAPE(pred,tru)
+  rmsea[i] = rootMSE(tru,pred)
+  bench = tru[-length(tru)]
+  trub = tru[-1]
+  predb = pred[-1]
+  relera[i] = reler(predb,trub,bench)
+}
+data.frame(arsqa,WMAPEa,rmsea,relera)
+```
+
+```{r}
+coefnum = 1
+arsqc = c()
+rmsec = c()
+WMAPEc = c()
+relerc = c()
+tsa = WWSHa[,2]
+plot.ts(tsa[-1])
+for (i in (1:(length(aaaa)/2))){
+  pred = antidiff(tsa,aaaa[,i])
+  tru = antidiff(tsa,aaaa[,(length(aaaa)/2+i)])
+  lines(pred, col = 2)
+  arsqc[i] = adjr(pred,tru,coefnum)
+  WMAPEc[i] = WMAPE(pred,tru)
+  rmsec[i] = rootMSE(tru,pred)
+  bench = tru[-length(tru)]
+  trub = tru[-1]
+  predb = pred[-1]
+  relerc[i] = reler(predb,trub,bench)
+}
+data.frame(arsqc,WMAPEc,rmsec,relerc)
+```
+
+
+```{r}
+WWSHa <- read.csv("WWSHWSPDa.csv")
+head(WWSHa)
+```
+
+
+
+```{r}
+ts = diff(WWSHa[,2])
+exog = data.frame(ts)
+for (i in (3:length(WWSHa))){
+  exog[i-2] = diff(WWSHa[,i])
+}
+```
+
+```{r}
+#U1.RN <- U1[0,]
+er2 = as.matrix(crossvalid(ts,exog,5,50,c(1,0,0)))
+er = c(0,0,0,0,0)
+aaa = data.frame(er)
+
+for (i in (1:8)){
+  aaa[i] = as.matrix(crossvalid(ts,exog,5,50,c(i,0,0)))
+}
+```
+
+```{r}
+aaa[,8]
+er2
+```
+
+```{r}
+testttt = Arima(ts,order = c(5,0,0))
+```
+
+
+
+
+
+
+
+
+```{r}
+antidiff = function(orig,diffed){
+  return(orig[-length(orig)]+diffed)
+}
+```
+
+```{r}
+ts = WWSHa[,2]
+tsd = diff(ts)
+tsa = antidiff(ts,tsd)
+```
+
+```{r}
+sum(ts[-1]-tsa,na.rm=T)
+
+```
+
+```{r}
+crossvalidets <- function(ts,exog,k,h,order){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v+1
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    mod = ets(train)
+    modt = ets(test,model = mod)
+    #error[i+1] = accuracy(modt)[2]
+    coefnum = sum(order)
+    #pred = modt$fitted
+    #tru = test
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+}
+```
+
+```{r}
+aaaab=crossvalidets(ts,exog,3,5,c(1,0,0))
+```
+
+
+```{r}
+ts = diff(WWSHa[,2])
+exog = data.frame(ts)
+for (i in (3:length(WWSHa))){
+  exog[i-2] = diff(WWSHa[,i])
+}
+```
+
+```{r}
+crosv = data.frame(as.matrix(crossvalid(ts,exog,5,50,c(1,0,0))))
+for (num in (1:5)){
+  print(num)
+  crosv[num] = as.matrix(crossvalid(ts,exog,5,50,c(num,0,0)))
+}
+```
+
+
+
+
+
+
+```{r}
+crosv[,1][,10]
+```
+
+
+
+
+```{r}
+arsqa = c()
+rmsea = c()
+WMAPEa = c()
+relera = c()
+coefnum = 1
+for (i in (1:(length(aaaa)/2))){
+  pred = aaaa[,i]
+  tru = aaaa[,(length(aaaa)/2+i)]
+  arsqa[i] = adjr(pred,tru,coefnum)
+  WMAPEa[i] = WMAPE(pred,tru)
+  rmsea[i] = rootMSE(tru,pred)
+  bench = tru[-length(tru)]
+  trub = tru[-1]
+  predb = pred[-1]
+  relera[i] = reler(predb,trub,bench)
+}
+data.frame(arsqa,WMAPEa,rmsea,relera)
+```
+
+```{r}
+coefnum = 1
+arsqc = c()
+rmsec = c()
+WMAPEc = c()
+relerc = c()
+tsa = WWSHa[,2]
+plot.ts(tsa[-1])
+for (i in (1:(length(aaaa)/2))){
+  pred = antidiff(tsa,aaaa[,i])
+  tru = antidiff(tsa,aaaa[,(length(aaaa)/2+i)])
+  lines(pred, col = 2)
+  arsqc[i] = adjr(pred,tru,coefnum)
+  WMAPEc[i] = WMAPE(pred,tru)
+  rmsec[i] = rootMSE(tru,pred)
+  bench = tru[-length(tru)]
+  trub = tru[-1]
+  predb = pred[-1]
+  relerc[i] = reler(predb,trub,bench)
+}
+data.frame(arsqc,WMAPEc,rmsec,relerc)
+```
+
+
+
+
+
+
+
+
+
+
+
