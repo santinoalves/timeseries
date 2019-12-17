@@ -1,0 +1,53 @@
+---
+title: "yyet"
+author: "Connor Simpson"
+date: "05/12/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+require('raster')
+library(ncdf4)
+library(forecast)
+filter = stats::filter
+lag = stats::lag
+```
+
+
+
+```{r}
+data = read.csv("bioChemAll.csv")
+```
+```{r}
+data2 = data[-1]
+head(data2)
+```
+
+```{r}
+maxCCF = matrix(nrow = length(data2),ncol = length(data2),dimnames =list(names(data2),names(data2)))
+for (i in (1:length(data2))){
+  for (j in (1:length(data2))){
+        a=ccf(diff(data2[,i]),diff(data2[,j]),type=c("correlation","covariance"),plot=F,na.action = na.pass)
+        maxCCF[i,j] = max(abs(a$acf))  
+    
+    
+  }
+}
+```
+
+
+
+```{r}
+maxCCF
+```
+
+
+
+
+
+
+
+
