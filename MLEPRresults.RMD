@@ -1,0 +1,1053 @@
+---
+title: "Untitled"
+author: "Connor Simpson"
+date: "06/02/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+crossvalidtest <- function(ts,exog,k,h){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  testa = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  traina = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    #mod = Arima(train,order = order,xreg = trainx,include.constant = F)
+    #modt = Arima(test,model = mod,xreg=testx,include.constant = F)
+    #error[i+1] = accuracy(modt)[2]
+    #coefnum = sum(order)
+    #pred1 = modt$fitted
+    #tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    #pred = antidiff(tsori,pred1)
+    #tru = antidiff(tsori,tru1)
+    
+    
+    
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+    testa[,i+1]=test
+    #traina[,i+1] = train
+    
+    
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+  return(testa)
+}
+```
+
+```{r}
+crossvalidtrain <- function(ts,exog,k,h){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  testa = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  traina = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    #mod = Arima(train,order = order,xreg = trainx,include.constant = F)
+    #modt = Arima(test,model = mod,xreg=testx,include.constant = F)
+    #error[i+1] = accuracy(modt)[2]
+    #coefnum = sum(order)
+    #pred1 = modt$fitted
+    #tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    #pred = antidiff(tsori,pred1)
+    #tru = antidiff(tsori,tru1)
+    
+    
+    
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+    testa[,i+1]=test
+    traina[,i+1] = train
+    
+    
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+  return(traina)
+}
+```
+
+```{r}
+data4 = read.csv("bioChemAll43.csv")
+```
+```{r}
+data42 =data4[-1]
+head(data42)
+```
+
+
+```{r}
+WWSH2 = data42[,"darwinWave_WWSH_0"]
+WINDSPD02 = data42[,"darwinWind_WSPD_30min_0"]
+WINDSPD12 = data42[,"darwinWind_WSPD_30min_1"]
+WINDSPD22 = data42[,"darwinWind_WSPD_30min_2"]
+WINDSPD32 = data42[,"darwinWind_WSPD_30min_3"]
+darCNDC02 = data42[,"darwinBiochem_CNDC_0"]
+darCNDC12 = data42[,"darwinBiochem_CNDC_1"]
+darCNDC22 = data42[,"darwinBiochem_CNDC_2"]
+darCNDC32 = data42[,"darwinBiochem_CNDC_3"]
+darCNDC42 = data42[,"darwinBiochem_CNDC_4"]
+darCNDC52 = data42[,"darwinBiochem_CNDC_5"]
+darCNDC62 = data42[,"darwinBiochem_CNDC_6"]
+darTEMP02 = data42[,"darwinBiochem_TEMP_0"]
+darTEMP12 = data42[,"darwinBiochem_TEMP_1"]
+darTEMP22 = data42[,"darwinBiochem_TEMP_2"]
+darTEMP32 = data42[,"darwinBiochem_TEMP_3"]
+darTEMP42 = data42[,"darwinBiochem_TEMP_4"]
+darTEMP52 = data42[,"darwinBiochem_TEMP_5"]
+darTEMP62 = data42[,"darwinBiochem_TEMP_6"]
+darTURB02 = data42[,"darwinBiochem_TURB_0"]
+darTURB12 = data42[,"darwinBiochem_TURB_1"]
+darTURB22 = data42[,"darwinBiochem_TURB_2"]
+darTURB32 = data42[,"darwinBiochem_TURB_3"]
+darTURB42 = data42[,"darwinBiochem_TURB_4"]
+darTURB52 = data42[,"darwinBiochem_TURB_5"]
+darTURB62 = data42[,"darwinBiochem_TURB_6"]
+darPAR02 = data42[,"darwinBiochem_PAR_0"]
+darPAR12 = data42[,"darwinBiochem_PAR_1"]
+darPAR22 = data42[,"darwinBiochem_PAR_2"]
+darPAR32 = data42[,"darwinBiochem_PAR_3"]
+darPAR42 = data42[,"darwinBiochem_PAR_4"]
+darPAR52 = data42[,"darwinBiochem_PAR_5"]
+darPAR62 = data42[,"darwinBiochem_PAR_6"]
+darCPHL02 = data42[,"darwinBiochem_CPHL_0"]
+darCPHL12 = data42[,"darwinBiochem_CPHL_1"]
+darCPHL22 = data42[,"darwinBiochem_CPHL_2"]
+darCPHL32 = data42[,"darwinBiochem_CPHL_3"]
+darCPHL42 = data42[,"darwinBiochem_CPHL_4"]
+darCPHL52 = data42[,"darwinBiochem_CPHL_5"]
+darCPHL62 = data42[,"darwinBiochem_CPHL_6"]
+```
+
+```{r}
+WWSHmax = max(WWSH2,na.rm = T)
+WWSHmin = min(WWSH2,na.rm = T)
+WWSHNorm = (WWSH2 - WWSHmin)/(WWSHmax-WWSHmin)
+```
+
+
+```{r}
+WINDSPD02 = (WINDSPD02-min(WINDSPD02,na.rm=T))/(max(WINDSPD02,na.rm=T)-min(WINDSPD02,na.rm=T))
+WINDSPD12 = (WINDSPD12-min(WINDSPD12,na.rm=T))/(max(WINDSPD12,na.rm=T)-min(WINDSPD12,na.rm=T))
+WINDSPD22 = (WINDSPD22-min(WINDSPD22,na.rm=T))/(max(WINDSPD22,na.rm=T)-min(WINDSPD22,na.rm=T))
+WINDSPD32 = (WINDSPD32-min(WINDSPD32,na.rm=T))/(max(WINDSPD32,na.rm=T)-min(WINDSPD32,na.rm=T))
+darCNDC02 = (darCNDC02-min(darCNDC02,na.rm=T))/(max(darCNDC02,na.rm=T)-min(darCNDC02,na.rm=T))
+darCNDC12 = (darCNDC12-min(darCNDC12,na.rm=T))/(max(darCNDC12,na.rm=T)-min(darCNDC12,na.rm=T))
+darCNDC22 = (darCNDC22-min(darCNDC22,na.rm=T))/(max(darCNDC22,na.rm=T)-min(darCNDC22,na.rm=T))
+darCNDC32 = (darCNDC32-min(darCNDC32,na.rm=T))/(max(darCNDC32,na.rm=T)-min(darCNDC32,na.rm=T))
+darCNDC42 = (darCNDC42-min(darCNDC42,na.rm=T))/(max(darCNDC42,na.rm=T)-min(darCNDC42,na.rm=T))
+darCNDC52 = (darCNDC52-min(darCNDC52,na.rm=T))/(max(darCNDC52,na.rm=T)-min(darCNDC52,na.rm=T))
+darCNDC62 = (darCNDC62-min(darCNDC62,na.rm=T))/(max(darCNDC62,na.rm=T)-min(darCNDC62,na.rm=T))
+darTEMP02 = (darTEMP02-min(darTEMP02,na.rm=T))/(max(darTEMP02,na.rm=T)-min(darTEMP02,na.rm=T))
+darTEMP12 = (darTEMP12-min(darTEMP12,na.rm=T))/(max(darTEMP12,na.rm=T)-min(darTEMP12,na.rm=T))
+darTEMP22 = (darTEMP22-min(darTEMP22,na.rm=T))/(max(darTEMP22,na.rm=T)-min(darTEMP22,na.rm=T))
+darTEMP32 = (darTEMP32-min(darTEMP32,na.rm=T))/(max(darTEMP32,na.rm=T)-min(darTEMP32,na.rm=T))
+darTEMP42 = (darTEMP42-min(darTEMP42,na.rm=T))/(max(darTEMP42,na.rm=T)-min(darTEMP42,na.rm=T))
+darTEMP52 = (darTEMP52-min(darTEMP52,na.rm=T))/(max(darTEMP52,na.rm=T)-min(darTEMP52,na.rm=T))
+darTEMP62 = (darTEMP62-min(darTEMP62,na.rm=T))/(max(darTEMP62,na.rm=T)-min(darTEMP62,na.rm=T))
+darPAR02 = (darPAR02-min(darPAR02,na.rm=T))/(max(darPAR02,na.rm=T)-min(darPAR02,na.rm=T))
+darPAR12 = (darPAR12-min(darPAR12,na.rm=T))/(max(darPAR12,na.rm=T)-min(darPAR12,na.rm=T))
+darPAR22 = (darPAR22-min(darPAR22,na.rm=T))/(max(darPAR22,na.rm=T)-min(darPAR22,na.rm=T))
+darPAR32 = (darPAR32-min(darPAR32,na.rm=T))/(max(darPAR32,na.rm=T)-min(darPAR32,na.rm=T))
+darPAR42 = (darPAR42-min(darPAR42,na.rm=T))/(max(darPAR42,na.rm=T)-min(darPAR42,na.rm=T))
+darPAR52 = (darPAR52-min(darPAR52,na.rm=T))/(max(darPAR52,na.rm=T)-min(darPAR52,na.rm=T))
+darPAR62 = (darPAR62-min(darPAR62,na.rm=T))/(max(darPAR62,na.rm=T)-min(darPAR62,na.rm=T))
+darCPHL02 = (darCPHL02-min(darCPHL02,na.rm=T))/(max(darCPHL02,na.rm=T)-min(darCPHL02,na.rm=T))
+darCPHL12 = (darCPHL12-min(darCPHL12,na.rm=T))/(max(darCPHL12,na.rm=T)-min(darCPHL12,na.rm=T))
+darCPHL22 = (darCPHL22-min(darCPHL22,na.rm=T))/(max(darCPHL22,na.rm=T)-min(darCPHL22,na.rm=T))
+darCPHL32 = (darCPHL32-min(darCPHL32,na.rm=T))/(max(darCPHL32,na.rm=T)-min(darCPHL32,na.rm=T))
+darCPHL42 = (darCPHL42-min(darCPHL42,na.rm=T))/(max(darCPHL42,na.rm=T)-min(darCPHL42,na.rm=T))
+darCPHL52 = (darCPHL52-min(darCPHL52,na.rm=T))/(max(darCPHL52,na.rm=T)-min(darCPHL52,na.rm=T))
+darCPHL62 = (darCPHL62-min(darCPHL62,na.rm=T))/(max(darCPHL62,na.rm=T)-min(darCPHL62,na.rm=T))
+darTURB02 = (darTURB02-min(darTURB02,na.rm=T))/(max(darTURB02,na.rm=T)-min(darTURB02,na.rm=T))
+darTURB12 = (darTURB12-min(darTURB12,na.rm=T))/(max(darTURB12,na.rm=T)-min(darTURB12,na.rm=T))
+darTURB22 = (darTURB22-min(darTURB22,na.rm=T))/(max(darTURB22,na.rm=T)-min(darTURB22,na.rm=T))
+darTURB32 = (darTURB32-min(darTURB32,na.rm=T))/(max(darTURB32,na.rm=T)-min(darTURB32,na.rm=T))
+darTURB42 = (darTURB42-min(darTURB42,na.rm=T))/(max(darTURB42,na.rm=T)-min(darTURB42,na.rm=T))
+darTURB52 = (darTURB52-min(darTURB52,na.rm=T))/(max(darTURB52,na.rm=T)-min(darTURB52,na.rm=T))
+darTURB62 = (darTURB62-min(darTURB62,na.rm=T))/(max(darTURB62,na.rm=T)-min(darTURB62,na.rm=T))
+```
+
+
+
+
+
+```{r}
+WINDSPDall = data.frame(WINDSPD02,WINDSPD12,WINDSPD22,WINDSPD32)
+darCNDCALL = data.frame(darCNDC02,darCNDC12,darCNDC22,darCNDC32,darCNDC42,darCNDC52,darCNDC62)
+darTEMPALL = data.frame(darTEMP02,darTEMP12,darTEMP22,darTEMP32,darTEMP42,darTEMP52,darTEMP62)
+darCPHLALL = data.frame(darCPHL02,darCPHL12,darCPHL22,darCPHL32,darCPHL42,darCPHL52,darCPHL62)
+darPARALL = data.frame(darPAR02,darPAR12,darPAR22,darPAR32,darPAR42,darPAR52,darPAR62)
+darTURBALL = data.frame(darTURB02,darTURB12,darTURB22,darTURB32,darTURB42,darTURB52,darTURB62)
+```
+
+
+
+```{r}
+WWSHTestdata = crossvalidtest(WWSHNorm,data.frame(WWSHNorm),5,100)
+plot.ts(WWSHTestdata)
+```
+
+```{r}
+write.csv(WWSHTestdata,file = "WWSHTestdata.csv")
+```
+
+```{r}
+WWSHTraindata = crossvalidtrain(WWSHNorm,data.frame(WWSHNorm),5,100)
+plot.ts(WWSHTraindata[,2])
+lines(WWSHTestdata[,2],col=2)
+```
+
+```{r}
+write.csv(WWSHTraindata,file = "WWSHTraindata.csv")
+```
+
+
+```{r}
+crossvalidtrainx <- function(ts,exog,k,h){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  testa = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  traina = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  trainax = data.frame(as.matrix(exog))
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    #mod = Arima(train,order = order,xreg = trainx,include.constant = F)
+    #modt = Arima(test,model = mod,xreg=testx,include.constant = F)
+    #error[i+1] = accuracy(modt)[2]
+    #coefnum = sum(order)
+    #pred1 = modt$fitted
+    #tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    #pred = antidiff(tsori,pred1)
+    #tru = antidiff(tsori,tru1)
+    
+    
+    
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+    testa[,i+1]=test
+    traina[,i+1] = train
+    trainax[,i+1] = as.matrix(trainx)
+    
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+  return(trainax)
+}
+```
+
+
+```{r}
+crossvalidtestx <- function(ts,exog,k,h){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  testa = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  traina = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  trainax = data.frame(as.matrix(exog))
+  testax = data.frame(as.matrix(exog))
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    #mod = Arima(train,order = order,xreg = trainx,include.constant = F)
+    #modt = Arima(test,model = mod,xreg=testx,include.constant = F)
+    #error[i+1] = accuracy(modt)[2]
+    #coefnum = sum(order)
+    #pred1 = modt$fitted
+    #tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    #pred = antidiff(tsori,pred1)
+    #tru = antidiff(tsori,tru1)
+    
+    
+    
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+    testa[,i+1]=test
+    traina[,i+1] = train
+    trainax[,i+1] = as.matrix(trainx)
+    testax[,i+1] = as.matrix(testx)
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+  return(testax)
+}
+```
+```{r}
+WWSHTraindataxwind = crossvalidtrainx(WWSH2,WINDSPDall,5,100)
+plot.ts(WWSHTraindataxwind[,1])
+```
+
+
+```{r}
+WWSHTraindataxcndc = crossvalidtrainx(WWSH2,darCNDCALL,5,100)
+plot.ts(WWSHTraindataxcndc[,1])
+```
+
+
+```{r}
+WWSHTraindataxturb = crossvalidtrainx(WWSH2,darTURBALL,5,100)
+plot.ts(WWSHTraindataxturb[,1])
+```
+
+```{r}
+WWSHTraindataxpar = crossvalidtrainx(WWSH2,darPARALL,5,100)
+plot.ts(WWSHTraindataxpar[,1])
+```
+
+```{r}
+WWSHTraindataxcphl = crossvalidtrainx(WWSH2,darCPHLALL,5,100)
+plot.ts(WWSHTraindataxcphl[,1])
+```
+
+
+
+```{r}
+WWSHtestdataxturb = crossvalidtestx(WWSH2,darTURBALL,5,100)
+plot.ts(WWSHtestdataxturb[,1])
+```
+
+```{r}
+WWSHtestdataxpar = crossvalidtestx(WWSH2,darPARALL,5,100)
+plot.ts(WWSHtestdataxpar[,1])
+```
+
+```{r}
+WWSHtestdataxcphl = crossvalidtestx(WWSH2,darCPHLALL,5,100)
+plot.ts(WWSHtestdataxcphl[,1])
+```
+
+
+
+
+
+```{r}
+WWSHTraindataxdartemp = crossvalidtrainx(WWSH2,darTEMPALL,5,100)
+plot.ts(WWSHTraindataxdartemp[,1])
+```
+
+
+
+
+
+
+
+```{r}
+write.csv(WWSHTraindataxwind,file = "WWSHTraindataxwind.csv")
+```
+
+
+
+```{r}
+WWSHtestdataxwind = crossvalidtestx(WWSH2,WINDSPDall,5,100)
+plot.ts(WWSHtestdataxwind[,1])
+```
+
+
+```{r}
+WWSHtestdataxcndc = crossvalidtestx(WWSH2,darCNDCALL,5,100)
+plot.ts(WWSHtestdataxcndc[,1])
+```
+
+
+
+```{r}
+WWSHtestdataxdartemp = crossvalidtestx(WWSH2,darTEMPALL,5,100)
+plot.ts(WWSHtestdataxdartemp[,1])
+```
+
+
+
+```{r}
+write.csv(WWSHTraindataxwind,file = "WWSHTraindataxwind.csv")
+write.csv(WWSHTraindataxcndc,file = "WWSHTraindataxcndc.csv")
+write.csv(WWSHTraindataxdartemp,file = "WWSHTraindataxdartemp.csv")
+#write.csv(WWSHTraindataxbeagtemp,file = "WWSHTraindataxbeagtemp.csv")
+
+write.csv(WWSHtestdataxwind,file = "WWSHtestdataxwind.csv")
+write.csv(WWSHtestdataxcndc,file = "WWSHtestdataxcndc.csv")
+write.csv(WWSHtestdataxdartemp,file = "WWSHtestdataxdartemp.csv")
+#write.csv(WWSHtestdataxbeagtemp,file = "WWSHtestdataxbeagtemp.csv")
+```
+
+```{r}
+write.csv(WWSHTraindataxpar,file = "WWSHTraindataxpar.csv")
+write.csv(WWSHTraindataxturb,file = "WWSHTraindataxturb.csv")
+write.csv(WWSHTraindataxcphl,file = "WWSHTraindataxcphl.csv")
+#write.csv(WWSHTraindataxbeagtemp,file = "WWSHTraindataxbeagtemp.csv")
+
+write.csv(WWSHtestdataxpar,file = "WWSHtestdataxpar.csv")
+write.csv(WWSHtestdataxturb,file = "WWSHtestdataxturb.csv")
+write.csv(WWSHtestdataxcphl,file = "WWSHtestdataxcphl.csv")
+#write.csv(WWSHtestdataxbeagtemp,file = "WWSHtestdataxbeagtemp.csv")
+```
+
+
+
+WMAPE
+REMOVE ABS ON SUM(TRU)
+```{r}
+WMAPE <- function(pred,tru){
+  WMAPE = sum(abs(pred-tru),na.rm = T)/sum(tru,na.rm = T)
+  return(WMAPE)
+}
+```
+
+
+reler
+```{r}
+reler <- function(pred,tru,bench){
+  reler = sum(abs(tru-pred),na.rm = T)/sum(abs(tru-bench),na.rm = T)
+  return(reler)
+}
+```
+
+rsq 
+```{r}
+rsq <- function(pred,tru){
+  SSE = sum((tru-pred)^2,na.rm = T)
+  SS = sum((tru-mean(na.omit(tru)))^2,na.rm = T)
+  rsq = 1- SSE/SS
+  return(rsq)
+}
+```
+
+
+adjr
+```{r}
+adjr <- function(pred,tru,coefnum){
+  rs = rsq(pred,tru)
+  n = length(pred)
+  adjr = 1-(1-rs)*(n-1)/(n-coefnum-1)
+  return(adjr)
+}
+```
+
+rmse
+```{r}
+rootMSE = function(pred,tru){
+  return(sqrt(mean((pred-tru)^2,na.rm = T)))
+}
+```
+
+
+```{r}
+pred0 = read.csv("MLPRWWSHAll0.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+pred1 = read.csv("MLPRWWSHAll1.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+pred2 = read.csv("MLPRWWSHAll2.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+pred3 = read.csv("MLPRWWSHAll3.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+pred4 = read.csv("MLPRWWSHAll4.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+
+tru0 = read.csv("MLPRWWSHAll0tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+tru1 = read.csv("MLPRWWSHAll1tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+tru2 = read.csv("MLPRWWSHAll2tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+tru3 = read.csv("MLPRWWSHAll3tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+tru4 = read.csv("MLPRWWSHAll4tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+```
+
+```{r}
+plot.ts(pred0)
+lines(tru0,col=2)
+plot.ts(pred1)
+lines(tru1,col=2)
+plot.ts(pred2)
+lines(tru2,col=2)
+plot.ts(pred3)
+lines(tru3,col=2)
+plot.ts(pred4)
+lines(tru4,col=2)
+```
+
+
+
+#########################
+
+```{r}
+adjr0 = adjr(pred0,tru0,18)
+adjr1 = adjr(pred1,tru1,18)
+adjr2 = adjr(pred2,tru2,18)
+adjr3 = adjr(pred3,tru3,18)
+adjr4 = adjr(pred4,tru4,18)
+mean(c(adjr0,adjr1,adjr2,adjr3,adjr4))
+```
+
+```{r}
+rootMSE0 = rootMSE(pred0,tru0)
+rootMSE1 = rootMSE(pred1,tru1)
+rootMSE2 = rootMSE(pred2,tru2)
+rootMSE3 = rootMSE(pred3,tru3)
+rootMSE4 = rootMSE(pred4,tru4)
+mean(c(rootMSE0,rootMSE1,rootMSE2,rootMSE3,rootMSE4))
+```
+
+```{r}
+WMAPE0 = WMAPE(pred0,tru0)
+WMAPE1 = WMAPE(pred1,tru1)
+WMAPE2 = WMAPE(pred2,tru2)
+WMAPE3 = WMAPE(pred3,tru3)
+WMAPE4 = WMAPE(pred4,tru4)
+mean(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
+```
+
+############################################
+
+
+```{r}
+predWind0 = read.csv("MLPRWWSHAllWind0.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predWind1 = read.csv("MLPRWWSHAllWind1.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predWind2 = read.csv("MLPRWWSHAllWind2.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predWind3 = read.csv("MLPRWWSHAllWind3.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predWind4 = read.csv("MLPRWWSHAllWind4.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+
+truWind0 = read.csv("MLPRWWSHAllWind0tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+truWind1 = read.csv("MLPRWWSHAllWind1tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+truWind2 = read.csv("MLPRWWSHAllWind2tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+truWind3 = read.csv("MLPRWWSHAllWind3tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+truWind4 = read.csv("MLPRWWSHAllWind4tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+```
+
+
+```{r}
+plot.ts(predWind0,col=1)
+lines(truWind0,col=2)
+plot.ts(predWind1,col=1)
+lines(truWind1,col=2)
+plot.ts(predWind2,col=1)
+lines(truWind2,col=2)
+plot.ts(predWind3,col=1)
+lines(truWind3,col=2)
+plot.ts(predWind4,col=1)
+lines(truWind4,col=2)
+```
+
+```{r}
+adjrWind0 = adjr(predWind0,truWind0,4)
+adjrWind1 = adjr(predWind1,truWind1,4)
+adjrWind2 = adjr(predWind2,truWind2,4)
+adjrWind3 = adjr(predWind3,truWind3,4)
+adjrWind4 = adjr(predWind4,truWind4,4)
+mean(c(adjrWind0,adjrWind1,adjrWind2,adjrWind3,adjrWind4))
+```
+
+```{r}
+rootMSEWind0 = rootMSE(predWind0,truWind0)
+rootMSEWind1 = rootMSE(predWind1,truWind1)
+rootMSEWind2 = rootMSE(predWind2,truWind2)
+rootMSEWind3 = rootMSE(predWind3,truWind3)
+rootMSEWind4 = rootMSE(predWind4,truWind4)
+mean(c(rootMSEWind0,rootMSEWind1,rootMSEWind2,rootMSEWind3,rootMSEWind4))
+```
+
+```{r}
+WMAPEWind0 = WMAPE(predWind0,truWind0)
+WMAPEWind1 = WMAPE(predWind1,truWind1)
+WMAPEWind2 = WMAPE(predWind2,truWind2)
+WMAPEWind3 = WMAPE(predWind3,truWind3)
+WMAPEWind4 = WMAPE(predWind4,truWind4)
+mean(c(WMAPEWind0,WMAPEWind1,WMAPEWind2,WMAPEWind3,WMAPEWind4))
+```
+
+
+############################################
+
+
+```{r}
+predTemp0 = read.csv("MLPRWWSHAllTemp0.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predTemp1 = read.csv("MLPRWWSHAllTemp1.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predTemp2 = read.csv("MLPRWWSHAllTemp2.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predTemp3 = read.csv("MLPRWWSHAllTemp3.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predTemp4 = read.csv("MLPRWWSHAllTemp4.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+
+truTemp0 = read.csv("MLPRWWSHAllTemp0tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+truTemp1 = read.csv("MLPRWWSHAllTemp1tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+truTemp2 = read.csv("MLPRWWSHAllTemp2tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+truTemp3 = read.csv("MLPRWWSHAllTemp3tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+truTemp4 = read.csv("MLPRWWSHAllTemp4tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+```
+
+```{r}
+plot.ts(truTemp0,col=2)
+lines(predTemp0)
+```
+
+
+```{r}
+adjrTemp0 = adjr(predTemp0,truTemp0,4)
+adjrTemp1 = adjr(predTemp1,truTemp1,4)
+adjrTemp2 = adjr(predTemp2,truTemp2,4)
+adjrTemp3 = adjr(predTemp3,truTemp3,4)
+adjrTemp4 = adjr(predTemp4,truTemp4,4)
+mean(c(adjrTemp0,adjrTemp1,adjrTemp2,adjrTemp3,adjrTemp4))
+```
+
+```{r}
+rootMSETemp0 = rootMSE(predTemp0,truTemp0)
+rootMSETemp1 = rootMSE(predTemp1,truTemp1)
+rootMSETemp2 = rootMSE(predTemp2,truTemp2)
+rootMSETemp3 = rootMSE(predTemp3,truTemp3)
+rootMSETemp4 = rootMSE(predTemp4,truTemp4)
+mean(c(rootMSETemp0,rootMSETemp1,rootMSETemp2,rootMSETemp3,rootMSETemp4))
+```
+
+```{r}
+WMAPETemp0 = WMAPE(predTemp0,truTemp0)
+WMAPETemp1 = WMAPE(predTemp1,truTemp1)
+WMAPETemp2 = WMAPE(predTemp2,truTemp2)
+WMAPETemp3 = WMAPE(predTemp3,truTemp3)
+WMAPETemp4 = WMAPE(predTemp4,truTemp4)
+mean(c(WMAPETemp0,WMAPETemp1,WMAPETemp2,WMAPETemp3,WMAPETemp4))
+```
+
+
+
+
+############################################
+
+
+```{r}
+predcndc0 = read.csv("MLPRWWSHAllcndc0.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predcndc1 = read.csv("MLPRWWSHAllcndc1.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predcndc2 = read.csv("MLPRWWSHAllcndc2.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predcndc3 = read.csv("MLPRWWSHAllcndc3.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predcndc4 = read.csv("MLPRWWSHAllcndc4.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+
+trucndc0 = read.csv("MLPRWWSHAllcndc0tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+trucndc1 = read.csv("MLPRWWSHAllcndc1tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+trucndc2 = read.csv("MLPRWWSHAllcndc2tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+trucndc3 = read.csv("MLPRWWSHAllcndc3tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+trucndc4 = read.csv("MLPRWWSHAllcndc4tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+```
+
+```{r}
+plot.ts(trucndc0,col=2)
+lines(predcndc0)
+```
+
+
+```{r}
+adjrcndc0 = adjr(predcndc0,trucndc0,4)
+adjrcndc1 = adjr(predcndc1,trucndc1,4)
+adjrcndc2 = adjr(predcndc2,trucndc2,4)
+adjrcndc3 = adjr(predcndc3,trucndc3,4)
+adjrcndc4 = adjr(predcndc4,trucndc4,4)
+mean(c(adjrcndc0,adjrcndc1,adjrcndc2,adjrcndc3,adjrcndc4))
+```
+
+```{r}
+rootMSEcndc0 = rootMSE(predcndc0,trucndc0)
+rootMSEcndc1 = rootMSE(predcndc1,trucndc1)
+rootMSEcndc2 = rootMSE(predcndc2,trucndc2)
+rootMSEcndc3 = rootMSE(predcndc3,trucndc3)
+rootMSEcndc4 = rootMSE(predcndc4,trucndc4)
+mean(c(rootMSEcndc0,rootMSEcndc1,rootMSEcndc2,rootMSEcndc3,rootMSEcndc4))
+```
+
+```{r}
+WMAPEcndc0 = WMAPE(predcndc0,trucndc0)
+WMAPEcndc1 = WMAPE(predcndc1,trucndc1)
+WMAPEcndc2 = WMAPE(predcndc2,trucndc2)
+WMAPEcndc3 = WMAPE(predcndc3,trucndc3)
+WMAPEcndc4 = WMAPE(predcndc4,trucndc4)
+mean(c(WMAPEcndc0,WMAPEcndc1,WMAPEcndc2,WMAPEcndc3,WMAPEcndc4))
+```
+
+
+######
+
+############################################
+
+
+```{r}
+predpar0 = read.csv("MLPRWWSHAllpar0.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predpar1 = read.csv("MLPRWWSHAllpar1.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predpar2 = read.csv("MLPRWWSHAllpar2.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predpar3 = read.csv("MLPRWWSHAllpar3.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predpar4 = read.csv("MLPRWWSHAllpar4.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+
+trupar0 = read.csv("MLPRWWSHAllpar0tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+trupar1 = read.csv("MLPRWWSHAllpar1tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+trupar2 = read.csv("MLPRWWSHAllpar2tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+trupar3 = read.csv("MLPRWWSHAllpar3tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+trupar4 = read.csv("MLPRWWSHAllpar4tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+```
+
+```{r}
+plot.ts(trupar0,col=2)
+lines(predpar0)
+```
+
+
+```{r}
+adjrpar0 = adjr(predpar0,trupar0,4)
+adjrpar1 = adjr(predpar1,trupar1,4)
+adjrpar2 = adjr(predpar2,trupar2,4)
+adjrpar3 = adjr(predpar3,trupar3,4)
+adjrpar4 = adjr(predpar4,trupar4,4)
+mean(c(adjrpar0,adjrpar1,adjrpar2,adjrpar3,adjrpar4))
+```
+
+```{r}
+rootMSEpar0 = rootMSE(predpar0,trupar0)
+rootMSEpar1 = rootMSE(predpar1,trupar1)
+rootMSEpar2 = rootMSE(predpar2,trupar2)
+rootMSEpar3 = rootMSE(predpar3,trupar3)
+rootMSEpar4 = rootMSE(predpar4,trupar4)
+mean(c(rootMSEpar0,rootMSEpar1,rootMSEpar2,rootMSEpar3,rootMSEpar4))
+```
+
+```{r}
+WMAPEpar0 = WMAPE(predpar0,trupar0)
+WMAPEpar1 = WMAPE(predpar1,trupar1)
+WMAPEpar2 = WMAPE(predpar2,trupar2)
+WMAPEpar3 = WMAPE(predpar3,trupar3)
+WMAPEpar4 = WMAPE(predpar4,trupar4)
+mean(c(WMAPEpar0,WMAPEpar1,WMAPEpar2,WMAPEpar3,WMAPEpar4))
+```
+
+
+
+############################################
+
+
+```{r}
+predturb0 = read.csv("MLPRWWSHAllturb0.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predturb1 = read.csv("MLPRWWSHAllturb1.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predturb2 = read.csv("MLPRWWSHAllturb2.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predturb3 = read.csv("MLPRWWSHAllturb3.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predturb4 = read.csv("MLPRWWSHAllturb4.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+
+truturb0 = read.csv("MLPRWWSHAllturb0tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+truturb1 = read.csv("MLPRWWSHAllturb1tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+truturb2 = read.csv("MLPRWWSHAllturb2tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+truturb3 = read.csv("MLPRWWSHAllturb3tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+truturb4 = read.csv("MLPRWWSHAllturb4tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+```
+
+```{r}
+plot.ts(truturb0,col=2)
+lines(predturb0)
+```
+
+
+```{r}
+adjrturb0 = adjr(predturb0,truturb0,4)
+adjrturb1 = adjr(predturb1,truturb1,4)
+adjrturb2 = adjr(predturb2,truturb2,4)
+adjrturb3 = adjr(predturb3,truturb3,4)
+adjrturb4 = adjr(predturb4,truturb4,4)
+mean(c(adjrturb0,adjrturb1,adjrturb2,adjrturb3,adjrturb4))
+```
+
+```{r}
+rootMSEturb0 = rootMSE(predturb0,truturb0)
+rootMSEturb1 = rootMSE(predturb1,truturb1)
+rootMSEturb2 = rootMSE(predturb2,truturb2)
+rootMSEturb3 = rootMSE(predturb3,truturb3)
+rootMSEturb4 = rootMSE(predturb4,truturb4)
+mean(c(rootMSEturb0,rootMSEturb1,rootMSEturb2,rootMSEturb3,rootMSEturb4))
+```
+
+```{r}
+WMAPEturb0 = WMAPE(predturb0,truturb0)
+WMAPEturb1 = WMAPE(predturb1,truturb1)
+WMAPEturb2 = WMAPE(predturb2,truturb2)
+WMAPEturb3 = WMAPE(predturb3,truturb3)
+WMAPEturb4 = WMAPE(predturb4,truturb4)
+mean(c(WMAPEturb0,WMAPEturb1,WMAPEturb2,WMAPEturb3,WMAPEturb4))
+```
+
+
+
+
+############################################
+
+
+```{r}
+predcphl0 = read.csv("MLPRWWSHAllcphl0.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predcphl1 = read.csv("MLPRWWSHAllcphl1.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predcphl2 = read.csv("MLPRWWSHAllcphl2.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predcphl3 = read.csv("MLPRWWSHAllcphl3.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+predcphl4 = read.csv("MLPRWWSHAllcphl4.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+
+trucphl0 = read.csv("MLPRWWSHAllcphl0tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+trucphl1 = read.csv("MLPRWWSHAllcphl1tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+trucphl2 = read.csv("MLPRWWSHAllcphl2tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+trucphl3 = read.csv("MLPRWWSHAllcphl3tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+trucphl4 = read.csv("MLPRWWSHAllcphl4tru.csv")[,2]*(WWSHmax-WWSHmin) + WWSHmin
+```
+
+```{r}
+plot.ts(trucphl0,col=2)
+lines(predcphl0)
+```
+
+
+```{r}
+adjrcphl0 = adjr(predcphl0,trucphl0,4)
+adjrcphl1 = adjr(predcphl1,trucphl1,4)
+adjrcphl2 = adjr(predcphl2,trucphl2,4)
+adjrcphl3 = adjr(predcphl3,trucphl3,4)
+adjrcphl4 = adjr(predcphl4,trucphl4,4)
+mean(c(adjrcphl0,adjrcphl1,adjrcphl2,adjrcphl3,adjrcphl4))
+```
+
+```{r}
+rootMSEcphl0 = rootMSE(predcphl0,trucphl0)
+rootMSEcphl1 = rootMSE(predcphl1,trucphl1)
+rootMSEcphl2 = rootMSE(predcphl2,trucphl2)
+rootMSEcphl3 = rootMSE(predcphl3,trucphl3)
+rootMSEcphl4 = rootMSE(predcphl4,trucphl4)
+mean(c(rootMSEcphl0,rootMSEcphl1,rootMSEcphl2,rootMSEcphl3,rootMSEcphl4))
+```
+
+```{r}
+WMAPEcphl0 = WMAPE(predcphl0,trucphl0)
+WMAPEcphl1 = WMAPE(predcphl1,trucphl1)
+WMAPEcphl2 = WMAPE(predcphl2,trucphl2)
+WMAPEcphl3 = WMAPE(predcphl3,trucphl3)
+WMAPEcphl4 = WMAPE(predcphl4,trucphl4)
+mean(c(WMAPEcphl0,WMAPEcphl1,WMAPEcphl2,WMAPEcphl3,WMAPEcphl4))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+WWSHxcphltrain = pd.concat([WWSHTraindata2,WWSHTraindataxcphl2],axis=1)
+WWSHxcphltest = pd.concat([WWSHTestdata2,WWSHtestdataxcphl2],axis=1)
+for i in range(0,5):
+    WWSHdata = WWSHxcphltrain.iloc[:,[i,i*7+5,i*7+6,i*7+7,i*7+8,i*7+9,i*7+10,i*7+11]]
+    WWSHdata = WWSHdata.dropna()
+    WWSHtrain = WWSHdata.iloc[:,0]
+    cphltrain = WWSHdata.iloc[:,[1,2,3,4,5,6,7]]
+    
+    regressorWWSHxcphl = MLPRegressor()
+    regressorWWSHxcphl.fit(cphltrain,WWSHtrain)
+    
+    WWSHdatatest = WWSHxcphltest.iloc[:,[i,i*7+5,i*7+6,i*7+7,i*7+8,i*7+9,i*7+10,i*7+11]]
+    WWSHdatatest = WWSHdatatest.dropna()
+    WWSHdatatest = WWSHdatatest.reset_index().iloc[:,1:27]
+    globals()['WWSHtestcphl'+str(i)]  = WWSHdatatest.iloc[:,0]
+    cphltest = WWSHdatatest.iloc[:,[1,2,3,4,5,6,7]]
+    globals()['predcphl'+str(i)] = regressorWWSHxcphl.predict(cphltest)
+
+
+predcphl0 = pd.DataFrame(predcphl0)
+predcphl0.to_csv("MLPRWWSHAllcphl0.csv")
+predcphl1 = pd.DataFrame(predcphl1)
+predcphl1.to_csv("MLPRWWSHAllcphl1.csv")
+predcphl2 = pd.DataFrame(predcphl2)
+predcphl2.to_csv("MLPRWWSHAllcphl2.csv")
+predcphl3 = pd.DataFrame(predcphl3)
+predcphl3.to_csv("MLPRWWSHAllcphl3.csv")
+predcphl4 = pd.DataFrame(predcphl4)
+predcphl4.to_csv("MLPRWWSHAllcphl4.csv")
+
+WWSHtestcphl0 = pd.DataFrame(WWSHtestcphl0)
+WWSHtestcphl0.to_csv("MLPRWWSHAllcphl0tru.csv")
+WWSHtestcphl1 = pd.DataFrame(WWSHtestcphl1)
+WWSHtestcphl1.to_csv("MLPRWWSHAllcphl1tru.csv")
+WWSHtestcphl2 = pd.DataFrame(WWSHtestcphl2)
+WWSHtestcphl2.to_csv("MLPRWWSHAllcphl2tru.csv")
+WWSHtestcphl3 = pd.DataFrame(WWSHtestcphl3)
+WWSHtestcphl3.to_csv("MLPRWWSHAllcphl3tru.csv")
+WWSHtestcphl4 = pd.DataFrame(WWSHtestcphl4)
+WWSHtestcphl4.to_csv("MLPRWWSHAllcphl4tru.csv")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

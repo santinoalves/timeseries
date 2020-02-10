@@ -1,0 +1,418 @@
+---
+title: "ARIMAFULLDATAwwsh"
+author: "Connor Simpson"
+date: "09/02/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(forecast)
+library(Metrics)
+library(tseries)
+accuracy = forecast::accuracy
+```
+
+```{r}
+biochem = read.csv("bioChemAll43.csv")
+biochem = biochem[-1]
+```
+
+
+
+```{r}
+antidiff = function(orig,diffed){
+  return(orig[-length(orig)]+diffed)
+}
+```
+
+WMAPE
+REMOVE ABS ON SUM(TRU)
+```{r}
+WMAPE <- function(pred,tru){
+  WMAPE = sum(abs(pred-tru),na.rm = T)/sum(tru,na.rm = T)
+  return(WMAPE)
+}
+```
+
+
+reler
+```{r}
+reler <- function(pred,tru,bench){
+  reler = sum(abs(tru-pred),na.rm = T)/sum(abs(tru-bench),na.rm = T)
+  return(reler)
+}
+```
+
+rsq 
+```{r}
+rsq <- function(pred,tru){
+  SSE = sum((tru-pred)^2,na.rm = T)
+  SS = sum((tru-mean(na.omit(tru)))^2,na.rm = T)
+  rsq = 1- SSE/SS
+  return(rsq)
+}
+```
+
+
+adjr
+```{r}
+adjr <- function(pred,tru,coefnum){
+  rs = rsq(pred,tru)
+  n = length(pred)
+  adjr = 1-(1-rs)*(n-1)/(n-coefnum-1)
+  return(adjr)
+}
+```
+
+rmse
+```{r}
+rootMSE = function(pred,tru){
+  return(sqrt(mean((pred-tru)^2,na.rm = T)))
+}
+```
+
+
+```{r}
+crossvalid <- function(ts,exog,k,h,order,tsori){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    mod = Arima(train,order = order,xreg = trainx,include.constant = F)
+    modt = Arima(test,model = mod,xreg=testx,include.constant = F)
+    error[i+1] = accuracy(modt)[2]
+    coefnum = sum(order)
+    pred1 = modt$fitted
+    tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    pred = antidiff(tsori,pred1)
+    tru = antidiff(tsori,tru1)
+    
+    
+    
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    arsq[i+1] = adjr(pred,tru,coefnum)
+    WMAPE[i+1] = WMAPE(pred,tru)
+    rmse[i+1] = rootMSE(tru,pred)
+    bench = tru[-length(tru)]
+    trub = tru[-1]
+    predb = pred[-1]
+    reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+  }
+  return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+}
+```
+
+```{r}
+crossvalidnox <- function(ts,k,h,order,tsori){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    train = ts
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    mod = Arima(train,order = order,include.constant = F)
+    modt = Arima(test,model = mod,include.constant = F)
+    error[i+1] = accuracy(modt)[2]
+    coefnum = sum(order)
+    pred1 = modt$fitted
+    tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    pred = antidiff(tsori,pred1)
+    tru = antidiff(tsori,tru1)
+    
+    #plot.ts(train)
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    arsq[i+1] = adjr(pred,tru,coefnum)
+    WMAPE[i+1] = WMAPE(pred,tru)
+    rmse[i+1] = rootMSE(tru,pred)
+    bench = tru[-length(tru)]
+    trub = tru[-1]
+    predb = pred[-1]
+    reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+  }
+  return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+}
+```
+
+```{r}
+WWSH = biochem[,"darwinWave_WWSH_0"]
+WINDSPD0 = biochem[,"darwinWind_WSPD_30min_0"]
+WINDSPD1 = biochem[,"darwinWind_WSPD_30min_1"]
+WINDSPD2 = biochem[,"darwinWind_WSPD_30min_2"]
+WINDSPD3 = biochem[,"darwinWind_WSPD_30min_3"]
+darCNDC0 = biochem[,"darwinBiochem_CNDC_0"]
+darCNDC1 = biochem[,"darwinBiochem_CNDC_1"]
+darCNDC2 = biochem[,"darwinBiochem_CNDC_2"]
+darCNDC3 = biochem[,"darwinBiochem_CNDC_3"]
+darCNDC4 = biochem[,"darwinBiochem_CNDC_4"]
+darCNDC5 = biochem[,"darwinBiochem_CNDC_5"]
+darCNDC6 = biochem[,"darwinBiochem_CNDC_6"]
+darTEMP0 = biochem[,"darwinBiochem_TEMP_0"]
+darTEMP1 = biochem[,"darwinBiochem_TEMP_1"]
+darTEMP2 = biochem[,"darwinBiochem_TEMP_2"]
+darTEMP3 = biochem[,"darwinBiochem_TEMP_3"]
+darTEMP4 = biochem[,"darwinBiochem_TEMP_4"]
+darTEMP5 = biochem[,"darwinBiochem_TEMP_5"]
+darTEMP6 = biochem[,"darwinBiochem_TEMP_6"]
+darTURB0 = biochem[,"darwinBiochem_TURB_0"]
+darTURB1 = biochem[,"darwinBiochem_TURB_1"]
+darTURB2 = biochem[,"darwinBiochem_TURB_2"]
+darTURB3 = biochem[,"darwinBiochem_TURB_3"]
+darTURB4 = biochem[,"darwinBiochem_TURB_4"]
+darTURB5 = biochem[,"darwinBiochem_TURB_5"]
+darTURB6 = biochem[,"darwinBiochem_TURB_6"]
+darCPHL0 = biochem[,"darwinBiochem_CPHL_0"]
+darCPHL1 = biochem[,"darwinBiochem_CPHL_1"]
+darCPHL2 = biochem[,"darwinBiochem_CPHL_2"]
+darCPHL3 = biochem[,"darwinBiochem_CPHL_3"]
+darCPHL4 = biochem[,"darwinBiochem_CPHL_4"]
+darCPHL5 = biochem[,"darwinBiochem_CPHL_5"]
+darCPHL6 = biochem[,"darwinBiochem_CPHL_6"]
+darPAR0 = biochem[,"darwinBiochem_PAR_0"]
+darPAR1 = biochem[,"darwinBiochem_PAR_1"]
+darPAR2 = biochem[,"darwinBiochem_PAR_2"]
+darPAR3 = biochem[,"darwinBiochem_PAR_3"]
+darPAR4 = biochem[,"darwinBiochem_PAR_4"]
+darPAR5 = biochem[,"darwinBiochem_PAR_5"]
+darPAR6 = biochem[,"darwinBiochem_PAR_6"]
+darCNDC0 = biochem[,"darwinBiochem_CNDC_0"]
+darCNDC1 = biochem[,"darwinBiochem_CNDC_1"]
+darCNDC2 = biochem[,"darwinBiochem_CNDC_2"]
+darCNDC3 = biochem[,"darwinBiochem_CNDC_3"]
+darCNDC4 = biochem[,"darwinBiochem_CNDC_4"]
+darCNDC5 = biochem[,"darwinBiochem_CNDC_5"]
+darCNDC6 = biochem[,"darwinBiochem_CNDC_6"]
+```
+
+
+```{r}
+WINDSPDall = data.frame(diff(WINDSPD0),diff(WINDSPD1),diff(WINDSPD2),diff(WINDSPD3))
+darCNDCALL = data.frame(diff(darCNDC0),diff(darCNDC1),diff(darCNDC2),diff(darCNDC3),diff(darCNDC4),diff(darCNDC5),diff(darCNDC6))
+darTEMPALL = data.frame(diff(darTEMP0),diff(darTEMP1),diff(darTEMP2),diff(darTEMP3),diff(darTEMP4),diff(darTEMP5),diff(darTEMP6))
+darTURBALL = data.frame(diff(darTURB0),diff(darTURB1),diff(darTURB2),diff(darTURB3),diff(darTURB4),diff(darTURB5),diff(darTURB6))
+darPARALL = data.frame(diff(darPAR0),diff(darPAR1),diff(darPAR2),diff(darPAR3),diff(darPAR4),diff(darPAR5),diff(darPAR6))
+darCPHLALL = data.frame(diff(darCPHL0),diff(darCPHL1),diff(darCPHL2),diff(darCPHL3),diff(darCPHL4),diff(darCPHL5),diff(darCPHL6))
+darCNDCALL = data.frame(diff(darCNDC0),diff(darCNDC1),diff(darCNDC2),diff(darCNDC3),diff(darCNDC4),diff(darCNDC5),diff(darCNDC6))
+```
+
+
+```{r}
+
+er = c(0,0,0,0,0)
+WWSHAR = data.frame(er)
+WWSHMA = data.frame(er)
+for (i in (1:15)){
+  WWSHAR[i] = as.matrix(crossvalidnox(diff(WWSH),5,100,c(i,0,0),WWSH))
+}
+for (i in (1:15)){
+  WWSHMA[i] = as.matrix(crossvalidnox(diff(WWSH),5,100,c(0,0,i),WWSH))
+}
+```
+
+
+
+```{r}
+
+er = c(0,0,0,0,0)
+WWSHARWindAR = data.frame(er)
+WWSHARWindMA = data.frame(er)
+for (i in (1:15)){
+  WWSHARWindAR[i] = as.matrix(crossvalid(diff(WWSH),WINDSPDall,5,100,c(i,0,0),WWSH))
+}
+for (i in (1:15)){
+  WWSHARWindMA[i] = as.matrix(crossvalid(diff(WWSH),WINDSPDall,5,100,c(0,0,i),WWSH))
+}
+```
+
+
+```{r}
+
+er = c(0,0,0,0,0)
+WWSHARTURBAR = data.frame(er)
+WWSHARTURBMA = data.frame(er)
+for (i in (1:10)){
+  WWSHARTURBAR[i] = as.matrix(crossvalid(diff(WWSH),darTURBALL,5,100,c(i,0,0),WWSH))
+}
+
+for (i in (1:10)){
+  WWSHARTURBMA[i] = as.matrix(crossvalid(diff(WWSH),darTURBALL,5,100,c(0,0,i),WWSH))
+}
+```
+
+```{r}
+
+er = c(0,0,0,0,0)
+WWSHARPARAR = data.frame(er)
+WWSHARPARMA = data.frame(er)
+for (i in (1:10)){
+  WWSHARPARAR[i] = as.matrix(crossvalid(diff(WWSH),darPARALL,5,100,c(i,0,0),WWSH))
+}
+
+for (i in (1:10)){
+  WWSHARPARMA[i] = as.matrix(crossvalid(diff(WWSH),darPARALL,5,100,c(0,0,i),WWSH))
+}
+```
+
+
+```{r}
+
+er = c(0,0,0,0,0)
+WWSHARCPHLAR = data.frame(er)
+WWSHARCPHLMA = data.frame(er)
+for (i in (1:10)){
+  WWSHARCPHLAR[i] = as.matrix(crossvalid(diff(WWSH),darCPHLALL,5,100,c(i,0,0),WWSH))
+}
+
+for (i in (1:10)){
+  WWSHARCPHLMA[i] = as.matrix(crossvalid(diff(WWSH),darCPHLALL,5,100,c(0,0,i),WWSH))
+}
+```
+
+```{r}
+er = c(0,0,0,0,0)
+WWSHARCNDCAR = data.frame(er)
+WWSHARCNDCMA = data.frame(er)
+for (i in (1:10)){
+  WWSHARCNDCAR[i] = as.matrix(crossvalid(diff(WWSH),darCNDCALL,5,100,c(i,0,0),WWSH))
+}
+
+for (i in (1:10)){
+  WWSHARCNDCMA[i] = as.matrix(crossvalid(diff(WWSH),darCNDCALL,5,100,c(0,0,i),WWSH))
+}
+```
+
+
+```{r}
+er = c(0,0,0,0,0)
+WWSHARTEMPAR = data.frame(er)
+WWSHARTEMPMA = data.frame(er)
+for (i in (1:10)){
+  WWSHARTEMPAR[i] = as.matrix(crossvalid(diff(WWSH),darTEMPALL,5,100,c(i,0,0),WWSH))
+}
+
+for (i in (1:10)){
+  WWSHARTEMPMA[i] = as.matrix(crossvalid(diff(WWSH),darTEMPALL,5,100,c(0,0,i),WWSH))
+}
+```
+
+
+
+
+
+
+```{r}
+avWWSHAR = data.frame(row.names=c('arsq','WMAPE','rmse','reler'))
+
+for (i in (1:4)){
+  errora = c()
+  for (j in (1:length(WWSHARCPHLMA))){
+    errora[j] = mean(WWSHARCPHLMA[,j][,i])
+  }
+  if (i == 1){
+    error = max(errora)
+    order = which.max(errora)
+  }
+  else{
+  error = min(errora)
+  order = which.min(errora)
+  }
+  
+  avWWSHAR[i,1] =error
+  avWWSHAR[i,2] =order
+}
+colnames(avWWSHAR) = c('error','order')
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

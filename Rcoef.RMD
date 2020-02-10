@@ -1,0 +1,52 @@
+---
+title: "PearsonR"
+author: "Connor Simpson"
+date: "09/02/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+data4 = read.csv("bioChemAll43.csv")
+```
+```{r}
+data42 =data4[-1]
+head(data42)
+```
+
+```{r}
+Rcoef = c()
+for (i in 1:length(data42)){
+  Rcoef[i] = abs(cor(data42[,"darwinWave_WWSH_0"],data42[i],use="pairwise.complete.obs"))
+}
+```
+
+```{r}
+Rcoef = data.frame(Rcoef,row.names = colnames(data42))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
