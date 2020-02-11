@@ -1,0 +1,159 @@
+---
+title: "GLMTEMP"
+author: "Connor Simpson"
+date: "11/02/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+data4 = read.csv("darwinBiochem.csv")
+```
+```{r}
+data42 =data4[-1]
+head(data42)
+```
+
+
+```{r}
+WMAPE <- function(pred,tru){
+  WMAPE = sum(abs(pred-tru),na.rm = T)/sum(abs(tru),na.rm = T)
+  return(WMAPE)
+}
+```
+
+
+reler
+```{r}
+reler <- function(pred,tru,bench){
+  reler = sum(abs(tru-pred),na.rm = T)/sum(abs(tru-bench),na.rm = T)
+  return(reler)
+}
+```
+
+rsq 
+```{r}
+rsq <- function(pred,tru){
+  SSE = sum((tru-pred)^2,na.rm = T)
+  SS = sum((tru-mean(na.omit(tru)))^2,na.rm = T)
+  rsq = 1- SSE/SS
+  return(rsq)
+}
+```
+
+
+adjr
+```{r}
+adjr <- function(pred,tru,coefnum){
+  rs = rsq(pred,tru)
+  n = length(pred)
+  adjr = 1-(1-rs)*(n-1)/(n-coefnum-1)
+  return(adjr)
+}
+```
+
+rmse
+```{r}
+rootMSE = function(pred,tru){
+  return(sqrt(mean((pred-tru)^2,na.rm = T)))
+}
+```
+
+
+```{r}
+crossvalidlm <- function(ts,exog,k,h){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  testa = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  traina = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    
+    #Arima(train,order = order,xreg = trainx,include.constant = F)
+    mod = glm(train~.,data=trainx)
+    modt = predict.glm(mod,newdata=testx)
+    #error[i+1] = accuracy(modt)[2]
+    #coefnum = sum(order)
+    pred = modt
+    tru = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    #pred = antidiff(tsori,pred1)
+    #tru = antidiff(tsori,tru1)
+    
+    
+    
+    plot.ts(pred,col=2)
+    lines(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    arsq[i+1] = adjr(pred,tru,coefnum)
+    WMAPE[i+1] = WMAPE(pred,tru)
+    rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+    #testa[,i+1]=test
+    #traina[,i+1] = train
+    
+    
+  }
+  return(data.frame(arsq,WMAPE,rmse))
+  #return(data.frame(pred,tru))
+  #return(traina)
+}
+```
+
+
+
+
+
+```{r}
+TEMPlm = crossvalidlm(data42[,1],data42[c(2,4,5,6)],5,100)
+```
+
+
+```{r}
+mean(TEMPlm[,3])
+```
+
+
+
+
+
+
+

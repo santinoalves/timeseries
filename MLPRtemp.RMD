@@ -1,0 +1,576 @@
+---
+title: "DataextractTemp"
+author: "Connor Simpson"
+date: "11/02/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+crossvalidtest <- function(ts,exog,k,h){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  testa = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  traina = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    #mod = Arima(train,order = order,xreg = trainx,include.constant = F)
+    #modt = Arima(test,model = mod,xreg=testx,include.constant = F)
+    #error[i+1] = accuracy(modt)[2]
+    #coefnum = sum(order)
+    #pred1 = modt$fitted
+    #tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    #pred = antidiff(tsori,pred1)
+    #tru = antidiff(tsori,tru1)
+    
+    
+    
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+    testa[,i+1]=test
+    #traina[,i+1] = train
+    
+    
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+  return(testa)
+}
+```
+
+```{r}
+crossvalidtrain <- function(ts,exog,k,h){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  testa = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  traina = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    #mod = Arima(train,order = order,xreg = trainx,include.constant = F)
+    #modt = Arima(test,model = mod,xreg=testx,include.constant = F)
+    #error[i+1] = accuracy(modt)[2]
+    #coefnum = sum(order)
+    #pred1 = modt$fitted
+    #tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    #pred = antidiff(tsori,pred1)
+    #tru = antidiff(tsori,tru1)
+    
+    
+    
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+    testa[,i+1]=test
+    traina[,i+1] = train
+    
+    
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+  return(traina)
+}
+```
+
+```{r}
+data4 = read.csv("darwinBiochem.csv")
+```
+```{r}
+data42 =data4[-1]
+head(data42)
+```
+
+
+```{r}
+TEMP = data[,"TEMP"]
+CNDC = data[,'CNDC']
+TURB = data[,"TURB"]
+PAR = data[,"PAR"]
+CPHL = data[,"CPHL"]
+```
+
+```{r}
+TEMPmax = max(TEMP,na.rm = T)
+TEMPmin = min(TEMP,na.rm = T)
+TEMPNorm = (TEMP - TEMPmin)/(TEMPmax-TEMPmin)
+```
+
+
+```{r}
+CNDC = (CNDC-min(CNDC,na.rm=T))/(max(CNDC,na.rm=T)-min(CNDC,na.rm=T))
+TURB = (TURB-min(TURB,na.rm=T))/(max(TURB,na.rm=T)-min(TURB,na.rm=T))
+PAR = (PAR-min(PAR,na.rm=T))/(max(PAR,na.rm=T)-min(PAR,na.rm=T))
+CPHL = (CPHL-min(CPHL,na.rm=T))/(max(CPHL,na.rm=T)-min(CPHL,na.rm=T))
+
+```
+
+
+
+
+
+
+
+
+```{r}
+TEMPTestdata = crossvalidtest(TEMPNorm,data.frame(TEMPNorm),5,100)
+plot.ts(TEMPTestdata)
+```
+
+```{r}
+write.csv(TEMPTestdata,file = "TEMPTestdata.csv")
+```
+
+```{r}
+TEMPTraindata = crossvalidtrain(TEMPNorm,data.frame(TEMPNorm),5,100)
+plot.ts(TEMPTraindata[,2])
+lines(TEMPTestdata[,2],col=2)
+```
+
+```{r}
+write.csv(TEMPTraindata,file = "TEMPTraindata.csv")
+```
+
+
+```{r}
+crossvalidtrainx <- function(ts,exog,k,h){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  testa = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  traina = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  trainax = data.frame(as.matrix(exog))
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    #mod = Arima(train,order = order,xreg = trainx,include.constant = F)
+    #modt = Arima(test,model = mod,xreg=testx,include.constant = F)
+    #error[i+1] = accuracy(modt)[2]
+    #coefnum = sum(order)
+    #pred1 = modt$fitted
+    #tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    #pred = antidiff(tsori,pred1)
+    #tru = antidiff(tsori,tru1)
+    
+    
+    
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+    testa[,i+1]=test
+    traina[,i+1] = train
+    trainax[,i+1] = as.matrix(trainx)
+    
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+  return(trainax)
+}
+```
+
+
+```{r}
+crossvalidtestx <- function(ts,exog,k,h){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  testa = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  traina = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  trainax = data.frame(as.matrix(exog))
+  testax = data.frame(as.matrix(exog))
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    #mod = Arima(train,order = order,xreg = trainx,include.constant = F)
+    #modt = Arima(test,model = mod,xreg=testx,include.constant = F)
+    #error[i+1] = accuracy(modt)[2]
+    #coefnum = sum(order)
+    #pred1 = modt$fitted
+    #tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    #pred = antidiff(tsori,pred1)
+    #tru = antidiff(tsori,tru1)
+    
+    
+    
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+    testa[,i+1]=test
+    traina[,i+1] = train
+    trainax[,i+1] = as.matrix(trainx)
+    testax[,i+1] = as.matrix(testx)
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+  return(testax)
+}
+```
+
+```{r}
+TEMPTraindataxCNDC = crossvalidtrainx(TEMP,data.frame(CNDC),5,100)
+plot.ts(TEMPTraindataxCNDC[,1])
+```
+
+
+```{r}
+TEMPTraindataxPAR = crossvalidtrainx(TEMP,data.frame(PAR),5,100)
+plot.ts(TEMPTraindataxPAR[,1])
+```
+
+
+```{r}
+TEMPTraindataxTURB = crossvalidtrainx(TEMP,data.frame(TURB),5,100)
+plot.ts(TEMPTraindataxTURB[,1])
+```
+
+```{r}
+TEMPTraindataxCPHL = crossvalidtrainx(TEMP,data.frame(CPHL),5,100)
+plot.ts(TEMPTraindataxCPHL[,1])
+```
+
+
+
+
+
+```{r}
+TEMPtestdataxTURB = crossvalidtestx(TEMP,data.frame(TURB),5,100)
+plot.ts(TEMPtestdataxTURB[,1])
+```
+
+```{r}
+TEMPtestdataxPAR = crossvalidtestx(TEMP,data.frame(PAR),5,100)
+plot.ts(TEMPtestdataxPAR[,1])
+```
+
+```{r}
+TEMPtestdataxCPHL = crossvalidtestx(TEMP,data.frame(CPHL),5,100)
+plot.ts(TEMPtestdataxCPHL[,1])
+```
+
+```{r}
+TEMPtestdataxCNDC = crossvalidtestx(TEMP,data.frame(CNDC),5,100)
+plot.ts(TEMPtestdataxCNDC[,1])
+```
+
+
+
+
+```{r}
+write.csv(TEMPTraindataxCNDC,file = "TEMPTraindataxCNDC.csv")
+write.csv(TEMPTraindataxPAR,file = "TEMPTraindataxPAR.csv")
+write.csv(TEMPTraindataxTURB,file = "TEMPTraindataxTURB.csv")
+write.csv(TEMPTraindataxCPHL,file = "TEMPTraindataxCPHL.csv")
+
+write.csv(TEMPtestdataxTURB,file = "TEMPtestdataxTURB.csv")
+write.csv(TEMPtestdataxPAR,file = "TEMPtestdataxPAR.csv")
+write.csv(TEMPtestdataxCPHL,file = "TEMPtestdataxCPHL.csv")
+write.csv(TEMPtestdataxCNDC,file = "TEMPtestdataxCNDC.csv")
+```
+
+
+
+
+
+
+
+WMAPE
+REMOVE ABS ON SUM(TRU)
+```{r}
+WMAPE <- function(pred,tru){
+  WMAPE = sum(abs(pred-tru),na.rm = T)/sum(tru,na.rm = T)
+  return(WMAPE)
+}
+```
+
+
+reler
+```{r}
+reler <- function(pred,tru,bench){
+  reler = sum(abs(tru-pred),na.rm = T)/sum(abs(tru-bench),na.rm = T)
+  return(reler)
+}
+```
+
+rsq 
+```{r}
+rsq <- function(pred,tru){
+  SSE = sum((tru-pred)^2,na.rm = T)
+  SS = sum((tru-mean(na.omit(tru)))^2,na.rm = T)
+  rsq = 1- SSE/SS
+  return(rsq)
+}
+```
+
+
+adjr
+```{r}
+adjr <- function(pred,tru,coefnum){
+  rs = rsq(pred,tru)
+  n = length(pred)
+  adjr = 1-(1-rs)*(n-1)/(n-coefnum-1)
+  return(adjr)
+}
+```
+
+rmse
+```{r}
+rootMSE = function(pred,tru){
+  return(sqrt(mean((pred-tru)^2,na.rm = T)))
+}
+```
+
+
+```{r}
+pred0 = read.csv("TEMP0.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+pred1 = read.csv("TEMP1.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+pred2 = read.csv("TEMP2.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+pred3 = read.csv("TEMP3.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+pred4 = read.csv("TEMP4.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+
+tru0 = read.csv("TEMP0tru.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+tru1 = read.csv("TEMP1tru.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+tru2 = read.csv("TEMP2tru.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+tru3 = read.csv("TEMP3tru.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+tru4 = read.csv("TEMP4tru.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+```
+
+```{r}
+plot.ts(pred0)
+lines(tru0,col=2)
+plot.ts(pred1)
+lines(tru1,col=2)
+plot.ts(pred2)
+lines(tru2,col=2)
+plot.ts(pred3)
+lines(tru3,col=2)
+plot.ts(pred4)
+lines(tru4,col=2)
+```
+
+```{r}
+adjr0 = adjr(pred0,tru0,18)
+adjr1 = adjr(pred1,tru1,18)
+adjr2 = adjr(pred2,tru2,18)
+adjr3 = adjr(pred3,tru3,18)
+adjr4 = adjr(pred4,tru4,18)
+mean(c(adjr0,adjr1,adjr2,adjr3,adjr4))
+```
+
+```{r}
+rootMSE0 = rootMSE(pred0,tru0)
+rootMSE1 = rootMSE(pred1,tru1)
+rootMSE2 = rootMSE(pred2,tru2)
+rootMSE3 = rootMSE(pred3,tru3)
+rootMSE4 = rootMSE(pred4,tru4)
+mean(c(rootMSE0,rootMSE1,rootMSE2,rootMSE3,rootMSE4))
+```
+
+```{r}
+WMAPE0 = WMAPE(pred0,tru0)
+WMAPE1 = WMAPE(pred1,tru1)
+WMAPE2 = WMAPE(pred2,tru2)
+WMAPE3 = WMAPE(pred3,tru3)
+WMAPE4 = WMAPE(pred4,tru4)
+mean(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
