@@ -1,0 +1,736 @@
+---
+title: "WINDMLPR"
+author: "Connor Simpson"
+date: "12/02/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+crossvalidtest <- function(ts,exog,k,h){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  testa = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  traina = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    #mod = Arima(train,order = order,xreg = trainx,include.constant = F)
+    #modt = Arima(test,model = mod,xreg=testx,include.constant = F)
+    #error[i+1] = accuracy(modt)[2]
+    #coefnum = sum(order)
+    #pred1 = modt$fitted
+    #tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    #pred = antidiff(tsori,pred1)
+    #tru = antidiff(tsori,tru1)
+    
+    
+    
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+    testa[,i+1]=test
+    #traina[,i+1] = train
+    
+    
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+  return(testa)
+}
+```
+
+```{r}
+crossvalidtrain <- function(ts,exog,k,h){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  testa = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  traina = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    #mod = Arima(train,order = order,xreg = trainx,include.constant = F)
+    #modt = Arima(test,model = mod,xreg=testx,include.constant = F)
+    #error[i+1] = accuracy(modt)[2]
+    #coefnum = sum(order)
+    #pred1 = modt$fitted
+    #tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    #pred = antidiff(tsori,pred1)
+    #tru = antidiff(tsori,tru1)
+    
+    
+    
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+    testa[,i+1]=test
+    traina[,i+1] = train
+    
+    
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+  return(traina)
+}
+```
+
+
+```{r}
+datawind = read.csv("BiochemWind.csv")
+```
+
+```{r}
+TEMP1 = datawind[,2]
+TEMP2 = datawind[,3]
+CNDC1 = datawind[,4]
+CNDC2 =datawind[,5]
+TURB1 = datawind[,8]
+TURB2 = datawind[,9]
+PAR1 = datawind[,10]
+PAR2= datawind[,11]
+CPHL1 = datawind[,12]
+CPHL2= datawind[,13]
+WIND = datawind[,18]
+```
+
+```{r}
+TEMP = data.frame(TEMP1,TEMP2)
+CNDC = data.frame(CNDC1,CNDC2)
+TURB = data.frame(TURB1,TURB2)
+PAR = data.frame(PAR1,PAR2)
+CPHL = data.frame(CPHL1,CPHL2)
+```
+
+```{r}
+WINDmax = max(WIND,na.rm = T)
+WINDmin = min(WIND,na.rm = T)
+WINDNorm = (WIND - WINDmin)/(WINDmax-WINDmin)
+```
+
+
+```{r}
+TEMP = (TEMP-min(TEMP,na.rm=T))/(max(TEMP,na.rm=T)-min(TEMP,na.rm=T))
+TURB = (TURB-min(TURB,na.rm=T))/(max(TURB,na.rm=T)-min(TURB,na.rm=T))
+PAR = (PAR-min(PAR,na.rm=T))/(max(PAR,na.rm=T)-min(PAR,na.rm=T))
+CPHL = (CPHL-min(CPHL,na.rm=T))/(max(CPHL,na.rm=T)-min(CPHL,na.rm=T))
+CNDC = (CNDC-min(CNDC,na.rm=T))/(max(CNDC,na.rm=T)-min(CNDC,na.rm=T))
+```
+
+
+
+
+
+
+
+
+```{r}
+WINDTestdata = crossvalidtest(WINDNorm,data.frame(WINDNorm),5,100)
+plot.ts(WINDTestdata)
+```
+
+```{r}
+write.csv(WINDTestdata,file = "WINDTestdata.csv")
+```
+
+```{r}
+WINDTraindata = crossvalidtrain(WINDNorm,data.frame(WINDNorm),5,100)
+plot.ts(WINDTraindata[,2])
+lines(WINDTestdata[,2],col=2)
+```
+
+```{r}
+write.csv(WINDTraindata,file = "WINDTraindata.csv")
+```
+
+
+```{r}
+crossvalidtrainx <- function(ts,exog,k,h){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  testa = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  traina = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  trainax = data.frame(as.matrix(exog))
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    #mod = Arima(train,order = order,xreg = trainx,include.constant = F)
+    #modt = Arima(test,model = mod,xreg=testx,include.constant = F)
+    #error[i+1] = accuracy(modt)[2]
+    #coefnum = sum(order)
+    #pred1 = modt$fitted
+    #tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    #pred = antidiff(tsori,pred1)
+    #tru = antidiff(tsori,tru1)
+    
+    
+    
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+    testa[,i+1]=test
+    traina[,i+1] = train
+    trainax[,i+1] = as.matrix(trainx)
+    
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+  return(trainax)
+}
+```
+
+
+```{r}
+crossvalidtestx <- function(ts,exog,k,h){
+  pred = data.frame(ts)
+  tru = data.frame(ts)
+  testa = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  traina = data.frame(matrix(data=NA,nrow=length(ts),ncol = k))
+  trainax = data.frame(as.matrix(exog))
+  testax = data.frame(as.matrix(exog))
+  arsq=0
+  WMAPE=0
+  rmse=0
+  reler=0
+  v = as.integer(length(ts)/(2*k))
+  size = 2*v
+  error = rep(NA,(k-1))
+  for (i in (0:(k-1))){
+    if (i == 0){z = 0}
+    else{z=1}
+      if (i == k-1){z2 = 0}
+    else{z2=1}
+    test = rep(NA,length(ts))
+    testx = data.frame(exog)
+    for (bb in (1:length(exog))){
+      testx[bb] = c(rep(NA,length(exog[,bb])))
+    }
+    train = ts
+    trainx = exog
+    test[((size)*i+1):((size)*i+size)] = ts[((size)*i+1):((size)*i+size)]
+    for (m in (1:length(testx))){
+      testx[((size)*i+1):((size)*i+size),m] = exog[((size)*i+1):((size)*i+size),m]
+    }
+    train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+    for (b in (1:length(trainx))){
+      trainx[((size)*i+1-h*z):((size)*i+size+h*z2),b] = NA
+    }
+    #mod = Arima(train,order = order,xreg = trainx,include.constant = F)
+    #modt = Arima(test,model = mod,xreg=testx,include.constant = F)
+    #error[i+1] = accuracy(modt)[2]
+    #coefnum = sum(order)
+    #pred1 = modt$fitted
+    #tru1 = test
+    #print(length(tsori))
+    #print(length(pred1))
+    #print(length(tru1))
+    #pred = antidiff(tsori,pred1)
+    #tru = antidiff(tsori,tru1)
+    
+    
+    
+    #plot.ts(pred,col=2)
+    #plot.ts(tru,col=4)
+    #plot.ts(tru-pred)
+    #print(sum(abs(tru),na.rm=T))
+    #print(sum(abs(tru-pred),na.rm=T))
+    #arsq[i+1] = adjr(pred,tru,coefnum)
+    #WMAPE[i+1] = WMAPE(pred,tru)
+    #rmse[i+1] = rootMSE(tru,pred)
+    #bench = tru[-length(tru)]
+    #trub = tru[-1]
+    #predb = pred[-1]
+    #reler[i+1] = reler(predb,trub,bench)
+    #print(arsq)
+    #pred[i+1] = modt$fitted
+    #tru[i+1] = test
+    testa[,i+1]=test
+    traina[,i+1] = train
+    trainax[,i+1] = as.matrix(trainx)
+    testax[,i+1] = as.matrix(testx)
+  }
+  #return(data.frame(arsq,WMAPE,rmse,reler))
+  #return(data.frame(pred,tru))
+  return(testax)
+}
+```
+
+```{r}
+WINDTraindataxTEMP = crossvalidtrainx(WIND,data.frame(TEMP),5,100)
+plot.ts(WINDTraindataxTEMP[,1])
+```
+
+```{r}
+WINDTraindataxCNDC = crossvalidtrainx(WIND,data.frame(CNDC),5,100)
+plot.ts(WINDTraindataxCNDC[,1])
+```
+
+```{r}
+WINDTraindataxPAR = crossvalidtrainx(WIND,data.frame(PAR),5,100)
+plot.ts(WINDTraindataxPAR[,1])
+```
+
+
+```{r}
+WINDTraindataxTURB = crossvalidtrainx(WIND,data.frame(TURB),5,100)
+plot.ts(WINDTraindataxTURB[,1])
+```
+
+```{r}
+WINDTraindataxCPHL = crossvalidtrainx(WIND,data.frame(CPHL),5,100)
+plot.ts(WINDTraindataxCPHL[,1])
+```
+
+
+
+
+
+```{r}
+WINDtestdataxTURB = crossvalidtestx(WIND,data.frame(TURB),5,100)
+plot.ts(WINDtestdataxTURB[,1])
+```
+
+```{r}
+WINDtestdataxPAR = crossvalidtestx(WIND,data.frame(PAR),5,100)
+plot.ts(WINDtestdataxPAR[,1])
+```
+
+```{r}
+WINDtestdataxCPHL = crossvalidtestx(WIND,data.frame(CPHL),5,100)
+plot.ts(WINDtestdataxCPHL[,1])
+```
+
+```{r}
+WINDtestdataxTEMP = crossvalidtestx(WIND,data.frame(TEMP),5,100)
+plot.ts(WINDtestdataxTEMP[,1])
+```
+```{r}
+WINDtestdataxCNDC = crossvalidtestx(WIND,data.frame(CNDC),5,100)
+plot.ts(WINDtestdataxCNDC[,1])
+```
+
+
+
+```{r}
+write.csv(WINDTraindataxTEMP,file = "WINDTraindataxTEMP.csv")
+write.csv(WINDTraindataxPAR,file = "WINDTraindataxPAR.csv")
+write.csv(WINDTraindataxTURB,file = "WINDTraindataxTURB.csv")
+write.csv(WINDTraindataxCPHL,file = "WINDTraindataxCPHL.csv")
+write.csv(WINDTraindataxCNDC,file = "WINDTraindataxCNDC.csv")
+
+write.csv(WINDtestdataxTURB,file = "WINDtestdataxTURB.csv")
+write.csv(WINDtestdataxPAR,file = "WINDtestdataxPAR.csv")
+write.csv(WINDtestdataxCPHL,file = "WINDtestdataxCPHL.csv")
+write.csv(WINDtestdataxTEMP,file = "WINDtestdataxTEMP.csv")
+write.csv(WINDtestdataxCNDC,file = "WINDtestdataxCNDC.csv")
+```
+
+
+
+
+
+
+
+WMAPE
+REMOVE ABS ON SUM(TRU)
+```{r}
+WMAPE <- function(pred,tru){
+  WMAPE = sum((sum(abs(pred-tru)/tru,na.rm = T)/sum(tru,na.rm = T))*tru,na.rm=T)/length(na.remove(tru))
+  return(WMAPE)
+}
+```
+
+
+reler
+```{r}
+reler <- function(pred,tru,bench){
+  reler = sum(abs(tru-pred),na.rm = T)/sum(abs(tru-bench),na.rm = T)
+  return(reler)
+}
+```
+
+rsq 
+```{r}
+rsq <- function(pred,tru){
+  SSE = sum((tru-pred)^2,na.rm = T)
+  SS = sum((tru-mean(na.omit(tru)))^2,na.rm = T)
+  rsq = 1- SSE/SS
+  return(rsq)
+}
+```
+
+
+adjr
+```{r}
+adjr <- function(pred,tru,coefnum){
+  rs = rsq(pred,tru)
+  n = length(pred)
+  adjr = 1-(1-rs)*(n-1)/(n-coefnum-1)
+  return(adjr)
+}
+```
+
+rmse
+```{r}
+rootMSE = function(pred,tru){
+  return(sqrt(mean((pred-tru)^2,na.rm = T)))
+}
+```
+
+
+```{r}
+pred0 = read.csv("WIND0.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+pred1 = read.csv("WIND1.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+pred2 = read.csv("WIND2.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+pred3 = read.csv("WIND3.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+pred4 = read.csv("WIND4.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+
+tru0 = read.csv("WIND0tru.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+tru1 = read.csv("WIND1tru.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+tru2 = read.csv("WIND2tru.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+tru3 = read.csv("WIND3tru.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+tru4 = read.csv("WIND4tru.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+```
+
+```{r}
+plot.ts(pred0)
+lines(tru0,col=2)
+plot.ts(pred1)
+lines(tru1,col=2)
+plot.ts(pred2)
+lines(tru2,col=2)
+plot.ts(pred3)
+lines(tru3,col=2)
+plot.ts(pred4)
+lines(tru4,col=2)
+```
+
+```{r}
+adjr0 = adjr(pred0,tru0,10)
+adjr1 = adjr(pred1,tru1,10)
+adjr2 = adjr(pred2,tru2,10)
+adjr3 = adjr(pred3,tru3,10)
+adjr4 = adjr(pred4,tru4,10)
+mean(c(adjr0,adjr1,adjr2,adjr3,adjr4))
+```
+
+```{r}
+rootMSE0 = rootMSE(pred0,tru0)
+rootMSE1 = rootMSE(pred1,tru1)
+rootMSE2 = rootMSE(pred2,tru2)
+rootMSE3 = rootMSE(pred3,tru3)
+rootMSE4 = rootMSE(pred4,tru4)
+mean(c(rootMSE0,rootMSE1,rootMSE2,rootMSE3,rootMSE4))
+```
+
+```{r}
+WMAPE0 = WMAPE(pred0,tru0)
+WMAPE1 = WMAPE(pred1,tru1)
+WMAPE2 = WMAPE(pred2,tru2)
+WMAPE3 = WMAPE(pred3,tru3)
+WMAPE4 = WMAPE(pred4,tru4)
+mean(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
+```
+
+
+
+```{r}
+predCNDC0 = read.csv("WINDCNDC0.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+predCNDC1 = read.csv("WINDCNDC1.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+predCNDC2 = read.csv("WINDCNDC2.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+predCNDC3 = read.csv("WINDCNDC3.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+predCNDC4 = read.csv("WINDCNDC4.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+
+truCNDC0 = read.csv("WINDCNDC0tru.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+truCNDC1 = read.csv("WINDCNDC1tru.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+truCNDC2 = read.csv("WINDCNDC2tru.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+truCNDC3 = read.csv("WINDCNDC3tru.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+truCNDC4 = read.csv("WINDCNDC4tru.csv")[,2]*(WINDmax-WINDmin) + WINDmin
+```
+
+```{r}
+plot.ts(predCNDC0)
+lines(truCNDC0,col=2)
+plot.ts(predCNDC1)
+lines(truCNDC1,col=2)
+plot.ts(predCNDC2)
+lines(truCNDC2,col=2)
+plot.ts(predCNDC3)
+lines(truCNDC3,col=2)
+plot.ts(predCNDC4)
+lines(truCNDC4,col=2)
+```
+
+```{r}
+adjr0 = adjr(predCNDC0,truCNDC0,10)
+adjr1 = adjr(predCNDC1,truCNDC1,10)
+adjr2 = adjr(predCNDC2,truCNDC2,10)
+adjr3 = adjr(predCNDC3,truCNDC3,10)
+adjr4 = adjr(predCNDC4,truCNDC4,10)
+mean(c(adjr0,adjr1,adjr2,adjr3,adjr4))
+```
+
+```{r}
+rootMSE0 = rootMSE(predCNDC0,truCNDC0)
+rootMSE1 = rootMSE(predCNDC1,truCNDC1)
+rootMSE2 = rootMSE(predCNDC2,truCNDC2)
+rootMSE3 = rootMSE(predCNDC3,truCNDC3)
+rootMSE4 = rootMSE(predCNDC4,truCNDC4)
+mean(c(rootMSE0,rootMSE1,rootMSE2,rootMSE3,rootMSE4))
+```
+
+```{r}
+WMAPE0 = WMAPE(predCNDC0,tru0)
+WMAPE1 = WMAPE(predCNDC1,tru1)
+WMAPE2 = WMAPE(predCNDC2,tru2)
+WMAPE3 = WMAPE(predCNDC3,tru3)
+WMAPE4 = WMAPE(predCNDC4,tru4)
+mean(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
+```
+
+
+import numpy as np
+import pandas as pd
+from sklearn.neural_network import MLPRegressor
+import matplotlib.pyplot as plt
+
+
+CNDCTestdata = pd.read_csv("CNDCTestdata.csv")
+CNDCTraindata = pd.read_csv("CNDCTraindata.csv")
+
+CNDCTraindataxCNDC = pd.read_csv("CNDCTraindataxCNDC.csv")
+CNDCTraindataxPAR = pd.read_csv("CNDCTraindataxPAR.csv")
+CNDCTraindataxTURB = pd.read_csv("CNDCTraindataxTURB.csv")
+CNDCTraindataxCPHL = pd.read_csv("CNDCTraindataxCPHL.csv")
+CNDCTraindataxTEMP = pd.read_csv("CNDCTraindataxTEMP.csv")
+
+
+CNDCtestdataxTURB = pd.read_csv("CNDCtestdataxTURB.csv")
+CNDCtestdataxPAR = pd.read_csv("CNDCtestdataxPAR.csv")
+CNDCtestdataxCNDC = pd.read_csv("CNDCtestdataxCNDC.csv")
+CNDCtestdataxCPHL = pd.read_csv("CNDCtestdataxCPHL.csv")
+CNDCtestdataxTEMP = pd.read_csv("CNDCtestdataxTEMP.csv")
+#################################################
+
+CNDCTestdata = CNDCTestdata.iloc[:,1:]
+CNDCTraindata = CNDCTraindata.iloc[:,1:]
+
+CNDCTraindataxCNDC = CNDCTraindataxCNDC.iloc[:,1:]
+CNDCTraindataxPAR = CNDCTraindataxPAR.iloc[:,1:]
+CNDCTraindataxTURB = CNDCTraindataxTURB.iloc[:,1:]
+CNDCTraindataxCPHL = CNDCTraindataxCPHL.iloc[:,1:]
+CNDCTraindataxTEMP = CNDCTraindataxTEMP.iloc[:,1:]
+
+CNDCtestdataxTURB = CNDCtestdataxTURB.iloc[:,1:]
+CNDCtestdataxPAR = CNDCtestdataxPAR.iloc[:,1:]
+CNDCtestdataxCNDC = CNDCtestdataxCNDC.iloc[:,1:]
+CNDCtestdataxCPHL = CNDCtestdataxCPHL.iloc[:,1:]
+CNDCtestdataxTEMP = CNDCtestdataxTEMP.iloc[:,1:]
+
+#################################################
+
+
+
+
+CNDCxCNDCtrain = pd.concat([CNDCTraindata,CNDCTraindataxCNDC,CNDCTraindataxPAR,CNDCTraindataxTURB,CNDCTraindataxCPHL,CNDCTraindataxTEMP],axis=1)
+CNDCxCNDCtest = pd.concat([CNDCTestdata,CNDCtestdataxCNDC,CNDCtestdataxPAR,CNDCtestdataxTURB,CNDCtestdataxCPHL,CNDCtestdataxTEMP],axis=1)
+for i in range(0,5):
+    CNDCdata = CNDCxCNDCtrain.iloc[:,[i,i*2+5,i*2+6,i*2+15,i*2+16,i*2+25,i*2+26,i*2+35,i*2+36,i*2+45,i*2+46]]
+    CNDCdata = CNDCdata.dropna()
+    CNDCtrain = CNDCdata.iloc[:,0]
+    CNDCtrainx = CNDCdata.iloc[:,[1,2,3,4,5,6,7,8,9,10]]
+    
+    regressorCNDCxCNDC = MLPRegressor()
+    regressorCNDCxCNDC.fit(CNDCtrainx,CNDCtrain)
+    
+    CNDCdatatest = CNDCxCNDCtest.iloc[:,[i,i*2+5,i*2+6,i*2+15,i*2+16,i*2+25,i*2+26,i*2+35,i*2+36,i*2+45,i*2+46]]
+    CNDCdatatest = CNDCdatatest.dropna()
+    CNDCdatatest = CNDCdatatest.reset_index().iloc[:,1:]
+    globals()['CNDCtest'+str(i)]  = CNDCdatatest.iloc[:,0]
+    CNDCtest = CNDCdatatest.iloc[:,[1,2,3,4,5,6,7,8,9,10]]
+    globals()['pred'+str(i)] = regressorCNDCxCNDC.predict(CNDCtest)
+
+
+pred0 = pd.DataFrame(pred0)
+pred0.to_csv("CNDC0.csv")
+pred1 = pd.DataFrame(pred1)
+pred1.to_csv("CNDC1.csv")
+pred2 = pd.DataFrame(pred2)
+pred2.to_csv("CNDC2.csv")
+pred3 = pd.DataFrame(pred3)
+pred3.to_csv("CNDC3.csv")
+pred4 = pd.DataFrame(pred4)
+pred4.to_csv("CNDC4.csv")
+
+CNDCtest0 = pd.DataFrame(CNDCtest0)
+CNDCtest0.to_csv("CNDC0tru.csv")
+CNDCtest1 = pd.DataFrame(CNDCtest1)
+CNDCtest1.to_csv("CNDC1tru.csv")
+CNDCtest2 = pd.DataFrame(CNDCtest2)
+CNDCtest2.to_csv("CNDC2tru.csv")
+CNDCtest3 = pd.DataFrame(CNDCtest3)
+CNDCtest3.to_csv("CNDC3tru.csv")
+CNDCtest4 = pd.DataFrame(CNDCtest4)
+CNDCtest4.to_csv("CNDC4tru.csv")
+
+
+CNDCxCNDCtrain = pd.concat([CNDCTraindata,CNDCTraindataxCNDC],axis=1)
+CNDCxCNDCtest = pd.concat([CNDCTestdata,CNDCtestdataxCNDC],axis=1)
+for i in range(0,5):
+    CNDCdata = CNDCxCNDCtrain.iloc[:,[i,i*2+5,i*2+6]]
+    CNDCdata = CNDCdata.dropna()
+    CNDCtrain = CNDCdata.iloc[:,0]
+    CNDCtrainx = CNDCdata.iloc[:,[1,2]]
+    
+    regressorCNDCxCNDC = MLPRegressor()
+    regressorCNDCxCNDC.fit(CNDCtrainx,CNDCtrain)
+    
+    CNDCdatatest = CNDCxCNDCtest.iloc[:,[i,i*2+5,i*2+6]]
+    CNDCdatatest = CNDCdatatest.dropna()
+    CNDCdatatest = CNDCdatatest.reset_index().iloc[:,1:]
+    globals()['CNDCtestTEMP'+str(i)]  = CNDCdatatest.iloc[:,0]
+    CNDCtest = CNDCdatatest.iloc[:,[1,2]]
+    globals()['predTEMP'+str(i)] = regressorCNDCxCNDC.predict(CNDCtest)
+
+
+pred0 = pd.DataFrame(predTEMP0)
+pred0.to_csv("CNDCTEMP0.csv")
+pred1 = pd.DataFrame(predTEMP1)
+pred1.to_csv("CNDCTEMP1.csv")
+pred2 = pd.DataFrame(predTEMP2)
+pred2.to_csv("CNDCTEMP2.csv")
+pred3 = pd.DataFrame(predTEMP3)
+pred3.to_csv("CNDCTEMP3.csv")
+pred4 = pd.DataFrame(predTEMP4)
+pred4.to_csv("CNDCTEMP4.csv")
+
+CNDCtest0 = pd.DataFrame(CNDCtestTEMP0)
+CNDCtest0.to_csv("CNDCTEMP0tru.csv")
+CNDCtest1 = pd.DataFrame(CNDCtestTEMP1)
+CNDCtest1.to_csv("CNDCTEMP1tru.csv")
+CNDCtest2 = pd.DataFrame(CNDCtestTEMP2)
+CNDCtest2.to_csv("CNDCTEMP2tru.csv")
+CNDCtest3 = pd.DataFrame(CNDCtestTEMP3)
+CNDCtest3.to_csv("CNDCTEMP3tru.csv")
+CNDCtest4 = pd.DataFrame(CNDCtestTEMP4)
+CNDCtest4.to_csv("CNDCTEMP4tru.csv")

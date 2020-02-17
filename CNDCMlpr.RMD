@@ -1,13 +1,14 @@
 ---
-title: "DataextractTemp"
+title: "MLPRCNDC"
 author: "Connor Simpson"
-date: "11/02/2020"
+date: "12/02/2020"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
 
 
 
@@ -167,22 +168,22 @@ head(data42)
 
 
 ```{r}
-TEMP = data[,"TEMP"]
-CNDC = data[,'CNDC']
-TURB = data[,"TURB"]
-PAR = data[,"PAR"]
-CPHL = data[,"CPHL"]
+TEMP = data42[,"TEMP"]
+CNDC = data42[,'CNDC']
+TURB = data42[,"TURB"]
+PAR = data42[,"PAR"]
+CPHL = data42[,"CPHL"]
 ```
 
 ```{r}
-TEMPmax = max(TEMP,na.rm = T)
-TEMPmin = min(TEMP,na.rm = T)
-TEMPNorm = (TEMP - TEMPmin)/(TEMPmax-TEMPmin)
+CNDCmax = max(CNDC,na.rm = T)
+CNDCmin = min(CNDC,na.rm = T)
+CNDCNorm = (CNDC - CNDCmin)/(CNDCmax-CNDCmin)
 ```
 
 
 ```{r}
-CNDC = (CNDC-min(CNDC,na.rm=T))/(max(CNDC,na.rm=T)-min(CNDC,na.rm=T))
+TEMP = (TEMP-min(TEMP,na.rm=T))/(max(TEMP,na.rm=T)-min(TEMP,na.rm=T))
 TURB = (TURB-min(TURB,na.rm=T))/(max(TURB,na.rm=T)-min(TURB,na.rm=T))
 PAR = (PAR-min(PAR,na.rm=T))/(max(PAR,na.rm=T)-min(PAR,na.rm=T))
 CPHL = (CPHL-min(CPHL,na.rm=T))/(max(CPHL,na.rm=T)-min(CPHL,na.rm=T))
@@ -197,22 +198,22 @@ CPHL = (CPHL-min(CPHL,na.rm=T))/(max(CPHL,na.rm=T)-min(CPHL,na.rm=T))
 
 
 ```{r}
-TEMPTestdata = crossvalidtest(TEMPNorm,data.frame(TEMPNorm),5,100)
-plot.ts(TEMPTestdata)
+CNDCTestdata = crossvalidtest(CNDCNorm,data.frame(CNDCNorm),5,100)
+plot.ts(CNDCTestdata)
 ```
 
 ```{r}
-write.csv(TEMPTestdata,file = "TEMPTestdata.csv")
+write.csv(CNDCTestdata,file = "CNDCTestdata.csv")
 ```
 
 ```{r}
-TEMPTraindata = crossvalidtrain(TEMPNorm,data.frame(TEMPNorm),5,100)
-plot.ts(TEMPTraindata[,2])
-lines(TEMPTestdata[,2],col=2)
+CNDCTraindata = crossvalidtrain(CNDCNorm,data.frame(CNDCNorm),5,100)
+plot.ts(CNDCTraindata[,2])
+lines(CNDCTestdata[,2],col=2)
 ```
 
 ```{r}
-write.csv(TEMPTraindata,file = "TEMPTraindata.csv")
+write.csv(CNDCTraindata,file = "CNDCTraindata.csv")
 ```
 
 
@@ -367,64 +368,64 @@ crossvalidtestx <- function(ts,exog,k,h){
 ```
 
 ```{r}
-TEMPTraindataxCNDC = crossvalidtrainx(TEMP,data.frame(CNDC),5,100)
-plot.ts(TEMPTraindataxCNDC[,1])
+CNDCTraindataxTEMP = crossvalidtrainx(CNDC,data.frame(TEMP),5,100)
+plot.ts(CNDCTraindataxTEMP[,1])
 ```
 
 
 ```{r}
-TEMPTraindataxPAR = crossvalidtrainx(TEMP,data.frame(PAR),5,100)
-plot.ts(TEMPTraindataxPAR[,1])
+CNDCTraindataxPAR = crossvalidtrainx(CNDC,data.frame(PAR),5,100)
+plot.ts(CNDCTraindataxPAR[,1])
 ```
 
 
 ```{r}
-TEMPTraindataxTURB = crossvalidtrainx(TEMP,data.frame(TURB),5,100)
-plot.ts(TEMPTraindataxTURB[,1])
+CNDCTraindataxTURB = crossvalidtrainx(CNDC,data.frame(TURB),5,100)
+plot.ts(CNDCTraindataxTURB[,1])
 ```
 
 ```{r}
-TEMPTraindataxCPHL = crossvalidtrainx(TEMP,data.frame(CPHL),5,100)
-plot.ts(TEMPTraindataxCPHL[,1])
-```
-
-
-
-
-
-```{r}
-TEMPtestdataxTURB = crossvalidtestx(TEMP,data.frame(TURB),5,100)
-plot.ts(TEMPtestdataxTURB[,1])
-```
-
-```{r}
-TEMPtestdataxPAR = crossvalidtestx(TEMP,data.frame(PAR),5,100)
-plot.ts(TEMPtestdataxPAR[,1])
-```
-
-```{r}
-TEMPtestdataxCPHL = crossvalidtestx(TEMP,data.frame(CPHL),5,100)
-plot.ts(TEMPtestdataxCPHL[,1])
-```
-
-```{r}
-TEMPtestdataxCNDC = crossvalidtestx(TEMP,data.frame(CNDC),5,100)
-plot.ts(TEMPtestdataxCNDC[,1])
+CNDCTraindataxCPHL = crossvalidtrainx(CNDC,data.frame(CPHL),5,100)
+plot.ts(CNDCTraindataxCPHL[,1])
 ```
 
 
 
 
-```{r}
-write.csv(TEMPTraindataxCNDC,file = "TEMPTraindataxCNDC.csv")
-write.csv(TEMPTraindataxPAR,file = "TEMPTraindataxPAR.csv")
-write.csv(TEMPTraindataxTURB,file = "TEMPTraindataxTURB.csv")
-write.csv(TEMPTraindataxCPHL,file = "TEMPTraindataxCPHL.csv")
 
-write.csv(TEMPtestdataxTURB,file = "TEMPtestdataxTURB.csv")
-write.csv(TEMPtestdataxPAR,file = "TEMPtestdataxPAR.csv")
-write.csv(TEMPtestdataxCPHL,file = "TEMPtestdataxCPHL.csv")
-write.csv(TEMPtestdataxCNDC,file = "TEMPtestdataxCNDC.csv")
+```{r}
+CNDCtestdataxTURB = crossvalidtestx(CNDC,data.frame(TURB),5,100)
+plot.ts(CNDCtestdataxTURB[,1])
+```
+
+```{r}
+CNDCtestdataxPAR = crossvalidtestx(CNDC,data.frame(PAR),5,100)
+plot.ts(CNDCtestdataxPAR[,1])
+```
+
+```{r}
+CNDCtestdataxCPHL = crossvalidtestx(CNDC,data.frame(CPHL),5,100)
+plot.ts(CNDCtestdataxCPHL[,1])
+```
+
+```{r}
+CNDCtestdataxTEMP = crossvalidtestx(CNDC,data.frame(TEMP),5,100)
+plot.ts(CNDCtestdataxTEMP[,1])
+```
+
+
+
+
+```{r}
+write.csv(CNDCTraindataxTEMP,file = "CNDCTraindataxTEMP.csv")
+write.csv(CNDCTraindataxPAR,file = "CNDCTraindataxPAR.csv")
+write.csv(CNDCTraindataxTURB,file = "CNDCTraindataxTURB.csv")
+write.csv(CNDCTraindataxCPHL,file = "CNDCTraindataxCPHL.csv")
+
+write.csv(CNDCtestdataxTURB,file = "CNDCtestdataxTURB.csv")
+write.csv(CNDCtestdataxPAR,file = "CNDCtestdataxPAR.csv")
+write.csv(CNDCtestdataxCPHL,file = "CNDCtestdataxCPHL.csv")
+write.csv(CNDCtestdataxTEMP,file = "CNDCtestdataxTEMP.csv")
 ```
 
 
@@ -437,7 +438,7 @@ WMAPE
 REMOVE ABS ON SUM(TRU)
 ```{r}
 WMAPE <- function(pred,tru){
-  WMAPE = sum(abs(pred-tru),na.rm = T)/sum(tru,na.rm = T)
+  WMAPE = sum((sum(abs(pred-tru)/tru,na.rm = T)/sum(tru,na.rm = T))*tru,na.rm=T)/length(na.remove(tru))
   return(WMAPE)
 }
 ```
@@ -481,17 +482,17 @@ rootMSE = function(pred,tru){
 
 
 ```{r}
-pred0 = read.csv("TEMP0.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-pred1 = read.csv("TEMP1.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-pred2 = read.csv("TEMP2.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-pred3 = read.csv("TEMP3.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-pred4 = read.csv("TEMP4.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+pred0 = read.csv("CNDC0.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+pred1 = read.csv("CNDC1.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+pred2 = read.csv("CNDC2.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+pred3 = read.csv("CNDC3.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+pred4 = read.csv("CNDC4.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
 
-tru0 = read.csv("TEMP0tru.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-tru1 = read.csv("TEMP1tru.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-tru2 = read.csv("TEMP2tru.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-tru3 = read.csv("TEMP3tru.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-tru4 = read.csv("TEMP4tru.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+tru0 = read.csv("CNDC0tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+tru1 = read.csv("CNDC1tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+tru2 = read.csv("CNDC2tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+tru3 = read.csv("CNDC3tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+tru4 = read.csv("CNDC4tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
 ```
 
 ```{r}
@@ -505,10 +506,8 @@ plot.ts(pred3)
 lines(tru3,col=2)
 plot.ts(pred4)
 lines(tru4,col=2)
-plot.ts(c(tru0,tru1,tru2,tru3,tru4))
-lines(c(pred0,pred1,pred2,pred3,pred4),col=2)
-legend(x= 55000,y=26,legend=c('TEMP','PRED'),fill = c(1,2),col=c(2,3))
-title("MLPRxALL TEMP")
+plot.ts(c(pred0,pred1,pred2,pred3,pred4))
+lines(c(tru0,tru1,tru2,tru3,tru4),col=2)
 ```
 
 ```{r}
@@ -519,6 +518,7 @@ adjr3 = adjr(pred3,tru3,4)
 adjr4 = adjr(pred4,tru4,4)
 mean(c(adjr0,adjr1,adjr2,adjr3,adjr4))
 sd(c(adjr0,adjr1,adjr2,adjr3,adjr4))
+
 ```
 
 ```{r}
@@ -542,63 +542,62 @@ sd(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
 ```
 
 
-```{r}
-predCNDC0 = read.csv("TEMP0CNDC.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predCNDC1 = read.csv("TEMP1CNDC.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predCNDC2 = read.csv("TEMP2CNDC.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predCNDC3 = read.csv("TEMP3CNDC.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predCNDC4 = read.csv("TEMP4CNDC.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
 
-truCNDC0 = read.csv("TEMP0truCNDC.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truCNDC1 = read.csv("TEMP1truCNDC.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truCNDC2 = read.csv("TEMP2truCNDC.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truCNDC3 = read.csv("TEMP3truCNDC.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truCNDC4 = read.csv("TEMP4truCNDC.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+```{r}
+predTEMP0 = read.csv("CNDCTEMP0.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predTEMP1 = read.csv("CNDCTEMP1.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predTEMP2 = read.csv("CNDCTEMP2.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predTEMP3 = read.csv("CNDCTEMP3.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predTEMP4 = read.csv("CNDCTEMP4.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+
+truTEMP0 = read.csv("CNDCTEMP0tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truTEMP1 = read.csv("CNDCTEMP1tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truTEMP2 = read.csv("CNDCTEMP2tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truTEMP3 = read.csv("CNDCTEMP3tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truTEMP4 = read.csv("CNDCTEMP4tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
 ```
 
 ```{r}
-plot.ts(predCNDC0)
-lines(truCNDC0,col=2)
-plot.ts(predCNDC1)
-lines(truCNDC1,col=2)
-plot.ts(predCNDC2)
-lines(truCNDC2,col=2)
-plot.ts(predCNDC3)
-lines(truCNDC3,col=2)
-plot.ts(predCNDC4)
-lines(truCNDC4,col=2)
-plot.ts(c(truCNDC0,truCNDC1,truCNDC2,truCNDC3,truCNDC4))
-lines(c(predCNDC0,predCNDC1,predCNDC2,predCNDC3,predCNDC4),col=2)
-legend(x= 55000,y=26,legend=c('TEMP','PRED'),fill = c(1,2),col=c(2,3))
-title("MLPRxCNDC TEMP")
+plot.ts(predTEMP0)
+lines(truTEMP0,col=2)
+plot.ts(predTEMP1)
+lines(truTEMP1,col=2)
+plot.ts(predTEMP2)
+lines(truTEMP2,col=2)
+plot.ts(predTEMP3)
+lines(truTEMP3,col=2)
+plot.ts(predTEMP4)
+lines(truTEMP4,col=2)
+plot.ts(c(predTEMP0,predTEMP1,predTEMP2,predTEMP3,predTEMP4))
+lines(c(truTEMP0,truTEMP1,truTEMP2,truTEMP3,truTEMP4),col=2)
 ```
 
 ```{r}
-adjr0 = adjr(predCNDC0,truCNDC0,1)
-adjr1 = adjr(predCNDC1,truCNDC1,1)
-adjr2 = adjr(predCNDC2,truCNDC2,1)
-adjr3 = adjr(predCNDC3,truCNDC3,1)
-adjr4 = adjr(predCNDC4,truCNDC4,1)
+adjr0 = adjr(predTEMP0,truTEMP0,1)
+adjr1 = adjr(predTEMP1,truTEMP1,1)
+adjr2 = adjr(predTEMP2,truTEMP2,1)
+adjr3 = adjr(predTEMP3,truTEMP3,1)
+adjr4 = adjr(predTEMP4,truTEMP4,1)
 mean(c(adjr0,adjr1,adjr2,adjr3,adjr4))
 sd(c(adjr0,adjr1,adjr2,adjr3,adjr4))
 ```
 
 ```{r}
-rootMSE0 = rootMSE(predCNDC0,truCNDC0)
-rootMSE1 = rootMSE(predCNDC1,truCNDC1)
-rootMSE2 = rootMSE(predCNDC2,truCNDC2)
-rootMSE3 = rootMSE(predCNDC3,truCNDC3)
-rootMSE4 = rootMSE(predCNDC4,truCNDC4)
+rootMSE0 = rootMSE(predTEMP0,truTEMP0)
+rootMSE1 = rootMSE(predTEMP1,truTEMP1)
+rootMSE2 = rootMSE(predTEMP2,truTEMP2)
+rootMSE3 = rootMSE(predTEMP3,truTEMP3)
+rootMSE4 = rootMSE(predTEMP4,truTEMP4)
 mean(c(rootMSE0,rootMSE1,rootMSE2,rootMSE3,rootMSE4))
 sd(c(rootMSE0,rootMSE1,rootMSE2,rootMSE3,rootMSE4))
 ```
 
 ```{r}
-WMAPE0 = WMAPE(predCNDC0,truCNDC0)
-WMAPE1 = WMAPE(predCNDC1,truCNDC1)
-WMAPE2 = WMAPE(predCNDC2,truCNDC2)
-WMAPE3 = WMAPE(predCNDC3,truCNDC3)
-WMAPE4 = WMAPE(predCNDC4,truCNDC4)
+WMAPE0 = WMAPE(predTEMP0,truTEMP0)
+WMAPE1 = WMAPE(predTEMP1,truTEMP1)
+WMAPE2 = WMAPE(predTEMP2,truTEMP2)
+WMAPE3 = WMAPE(predTEMP3,truTEMP3)
+WMAPE4 = WMAPE(predTEMP4,truTEMP4)
 mean(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
 sd(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
 ```
@@ -606,17 +605,17 @@ sd(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
 
 
 ```{r}
-predTURB0 = read.csv("TEMP0TURB.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predTURB1 = read.csv("TEMP1TURB.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predTURB2 = read.csv("TEMP2TURB.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predTURB3 = read.csv("TEMP3TURB.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predTURB4 = read.csv("TEMP4TURB.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+predTURB0 = read.csv("CNDCTURB0.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predTURB1 = read.csv("CNDCTURB1.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predTURB2 = read.csv("CNDCTURB2.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predTURB3 = read.csv("CNDCTURB3.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predTURB4 = read.csv("CNDCTURB4.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
 
-truTURB0 = read.csv("TEMP0truTURB.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truTURB1 = read.csv("TEMP1truTURB.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truTURB2 = read.csv("TEMP2truTURB.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truTURB3 = read.csv("TEMP3truTURB.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truTURB4 = read.csv("TEMP4truTURB.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+truTURB0 = read.csv("CNDCTURB0tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truTURB1 = read.csv("CNDCTURB1tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truTURB2 = read.csv("CNDCTURB2tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truTURB3 = read.csv("CNDCTURB3tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truTURB4 = read.csv("CNDCTURB4tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
 ```
 
 ```{r}
@@ -630,6 +629,8 @@ plot.ts(predTURB3)
 lines(truTURB3,col=2)
 plot.ts(predTURB4)
 lines(truTURB4,col=2)
+plot.ts(c(predTURB0,predTURB1,predTURB2,predTURB3,predTURB4))
+lines(c(truTURB0,truTURB1,truTURB2,truTURB3,truTURB4),col=2)
 ```
 
 ```{r}
@@ -665,75 +666,17 @@ sd(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
 
 
 ```{r}
-predCPHL0 = read.csv("TEMP0CPHL.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predCPHL1 = read.csv("TEMP1CPHL.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predCPHL2 = read.csv("TEMP2CPHL.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predCPHL3 = read.csv("TEMP3CPHL.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predCPHL4 = read.csv("TEMP4CPHL.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+predPAR0 = read.csv("CNDCPAR0.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predPAR1 = read.csv("CNDCPAR1.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predPAR2 = read.csv("CNDCPAR2.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predPAR3 = read.csv("CNDCPAR3.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predPAR4 = read.csv("CNDCPAR4.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
 
-truCPHL0 = read.csv("TEMP0truCPHL.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truCPHL1 = read.csv("TEMP1truCPHL.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truCPHL2 = read.csv("TEMP2truCPHL.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truCPHL3 = read.csv("TEMP3truCPHL.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truCPHL4 = read.csv("TEMP4truCPHL.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-```
-
-```{r}
-plot.ts(predCPHL0)
-lines(truCPHL0,col=2)
-plot.ts(predCPHL1)
-lines(truCPHL1,col=2)
-plot.ts(predCPHL2)
-lines(truCPHL2,col=2)
-plot.ts(predCPHL3)
-lines(truCPHL3,col=2)
-plot.ts(predCPHL4)
-lines(truCPHL4,col=2)
-```
-
-```{r}
-adjr0 = adjr(predCPHL0,truCPHL0,1)
-adjr1 = adjr(predCPHL1,truCPHL1,1)
-adjr2 = adjr(predCPHL2,truCPHL2,1)
-adjr3 = adjr(predCPHL3,truCPHL3,1)
-adjr4 = adjr(predCPHL4,truCPHL4,1)
-mean(c(adjr0,adjr1,adjr2,adjr3,adjr4))
-sd(c(adjr0,adjr1,adjr2,adjr3,adjr4))
-```
-
-```{r}
-rootMSE0 = rootMSE(predCPHL0,truCPHL0)
-rootMSE1 = rootMSE(predCPHL1,truCPHL1)
-rootMSE2 = rootMSE(predCPHL2,truCPHL2)
-rootMSE3 = rootMSE(predCPHL3,truCPHL3)
-rootMSE4 = rootMSE(predCPHL4,truCPHL4)
-mean(c(rootMSE0,rootMSE1,rootMSE2,rootMSE3,rootMSE4))
-sd(c(rootMSE0,rootMSE1,rootMSE2,rootMSE3,rootMSE4))
-```
-
-```{r}
-WMAPE0 = WMAPE(predCPHL0,truCPHL0)
-WMAPE1 = WMAPE(predCPHL1,truCPHL1)
-WMAPE2 = WMAPE(predCPHL2,truCPHL2)
-WMAPE3 = WMAPE(predCPHL3,truCPHL3)
-WMAPE4 = WMAPE(predCPHL4,truCPHL4)
-mean(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
-sd(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
-```
-
-
-```{r}
-predPAR0 = read.csv("TEMP0PAR.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predPAR1 = read.csv("TEMP1PAR.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predPAR2 = read.csv("TEMP2PAR.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predPAR3 = read.csv("TEMP3PAR.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-predPAR4 = read.csv("TEMP4PAR.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-
-truPAR0 = read.csv("TEMP0truPAR.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truPAR1 = read.csv("TEMP1truPAR.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truPAR2 = read.csv("TEMP2truPAR.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truPAR3 = read.csv("TEMP3truPAR.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
-truPAR4 = read.csv("TEMP4truPAR.csv")[,2]*(TEMPmax-TEMPmin) + TEMPmin
+truPAR0 = read.csv("CNDCPAR0tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truPAR1 = read.csv("CNDCPAR1tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truPAR2 = read.csv("CNDCPAR2tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truPAR3 = read.csv("CNDCPAR3tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truPAR4 = read.csv("CNDCPAR4tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
 ```
 
 ```{r}
@@ -747,6 +690,8 @@ plot.ts(predPAR3)
 lines(truPAR3,col=2)
 plot.ts(predPAR4)
 lines(truPAR4,col=2)
+plot.ts(c(predPAR0,predPAR1,predPAR2,predPAR3,predPAR4))
+lines(c(truPAR0,truPAR1,truPAR2,truPAR3,truPAR4),col=2)
 ```
 
 ```{r}
@@ -781,46 +726,132 @@ sd(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
 
 
 
-TEMPxtemptrain = pd.concat([TEMPTraindata,TEMPTraindataxPAR],axis=1)
-TEMPxtemptest = pd.concat([TEMPTestdata,TEMPtestdataxPAR],axis=1)
+
+```{r}
+predCPHL0 = read.csv("CNDCCPHL0.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predCPHL1 = read.csv("CNDCCPHL1.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predCPHL2 = read.csv("CNDCCPHL2.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predCPHL3 = read.csv("CNDCCPHL3.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+predCPHL4 = read.csv("CNDCCPHL4.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+
+truCPHL0 = read.csv("CNDCCPHL0tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truCPHL1 = read.csv("CNDCCPHL1tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truCPHL2 = read.csv("CNDCCPHL2tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truCPHL3 = read.csv("CNDCCPHL3tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+truCPHL4 = read.csv("CNDCCPHL4tru.csv")[,2]*(CNDCmax-CNDCmin) + CNDCmin
+```
+
+```{r}
+plot.ts(predCPHL0)
+lines(truCPHL0,col=2)
+plot.ts(predCPHL1)
+lines(truCPHL1,col=2)
+plot.ts(predCPHL2)
+lines(truCPHL2,col=2)
+plot.ts(predCPHL3)
+lines(truCPHL3,col=2)
+plot.ts(predCPHL4)
+lines(truCPHL4,col=2)
+plot.ts(c(predCPHL0,predCPHL1,predCPHL2,predCPHL3,predCPHL4))
+lines(c(truCPHL0,truCPHL1,truCPHL2,truCPHL3,truCPHL4),col=2)
+```
+
+```{r}
+adjr0 = adjr(predCPHL0,truCPHL0,1)
+adjr1 = adjr(predCPHL1,truCPHL1,1)
+adjr2 = adjr(predCPHL2,truCPHL2,1)
+adjr3 = adjr(predCPHL3,truCPHL3,1)
+adjr4 = adjr(predCPHL4,truCPHL4,1)
+mean(c(adjr0,adjr1,adjr2,adjr3,adjr4))
+sd(c(adjr0,adjr1,adjr2,adjr3,adjr4))
+```
+
+```{r}
+rootMSE0 = rootMSE(predCPHL0,truCPHL0)
+rootMSE1 = rootMSE(predCPHL1,truCPHL1)
+rootMSE2 = rootMSE(predCPHL2,truCPHL2)
+rootMSE3 = rootMSE(predCPHL3,truCPHL3)
+rootMSE4 = rootMSE(predCPHL4,truCPHL4)
+mean(c(rootMSE0,rootMSE1,rootMSE2,rootMSE3,rootMSE4))
+sd(c(rootMSE0,rootMSE1,rootMSE2,rootMSE3,rootMSE4))
+```
+
+```{r}
+WMAPE0 = WMAPE(predCPHL0,truCPHL0)
+WMAPE1 = WMAPE(predCPHL1,truCPHL1)
+WMAPE2 = WMAPE(predCPHL2,truCPHL2)
+WMAPE3 = WMAPE(predCPHL3,truCPHL3)
+WMAPE4 = WMAPE(predCPHL4,truCPHL4)
+mean(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
+sd(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+WINDxWINDtrain = pd.concat([WINDTraindata,WINDTraindataxCPHL],axis=1)
+WINDxWINDtest = pd.concat([WINDTestdata,WINDtestdataxCPHL],axis=1)
 for i in range(0,5):
-    TEMPdata = TEMPxtemptrain.iloc[:,[i,i+5]]
-    TEMPdata = TEMPdata.dropna()
-    TEMPtrain = TEMPdata.iloc[:,0]
-    temptrain = TEMPdata.iloc[:,[1]]
+    WINDdata = WINDxWINDtrain.iloc[:,[i,i*2+5,i*2+6]]
+    WINDdata = WINDdata.dropna()
+    WINDtrain = WINDdata.iloc[:,0]
+    WINDtrainx = WINDdata.iloc[:,[1,2]]
     
-    regressorTEMPxtemp = MLPRegressor()
-    regressorTEMPxtemp.fit(temptrain,TEMPtrain)
+    regressorWINDxWIND = MLPRegressor()
+    regressorWINDxWIND.fit(WINDtrainx,WINDtrain)
     
-    TEMPdatatest = TEMPxtemptest.iloc[:,[i,i+5]]
-    TEMPdatatest = TEMPdatatest.dropna()
-    TEMPdatatest = TEMPdatatest.reset_index().iloc[:,1:]
-    globals()['TEMPtest'+str(i)]  = TEMPdatatest.iloc[:,0]
-    temptest = TEMPdatatest.iloc[:,[1]]
-    globals()['predPAR'+str(i)] = regressorTEMPxtemp.predict(temptest)
+    WINDdatatest = WINDxWINDtest.iloc[:,[i,i*2+5,i*2+6]]
+    WINDdatatest = WINDdatatest.dropna()
+    WINDdatatest = WINDdatatest.reset_index().iloc[:,1:]
+    globals()['WINDtestCPHL'+str(i)]  = WINDdatatest.iloc[:,0]
+    WINDtest = WINDdatatest.iloc[:,[1,2]]
+    globals()['predCPHL'+str(i)] = regressorWINDxWIND.predict(WINDtest)
 
 
-predPAR0 = pd.DataFrame(predPAR0)
-predPAR0.to_csv("TEMP0PAR.csv")
-predPAR1 = pd.DataFrame(predPAR1)
-predPAR1.to_csv("TEMP1PAR.csv")
-predPAR2 = pd.DataFrame(predPAR2)
-predPAR2.to_csv("TEMP2PAR.csv")
-predPAR3 = pd.DataFrame(predPAR3)
-predPAR3.to_csv("TEMP3PAR.csv")
-predPAR4 = pd.DataFrame(predPAR4)
-predPAR4.to_csv("TEMP4PAR.csv")
+pred0 = pd.DataFrame(predCPHL0)
+pred0.to_csv("WINDCPHL0.csv")
+pred1 = pd.DataFrame(predCPHL1)
+pred1.to_csv("WINDCPHL1.csv")
+pred2 = pd.DataFrame(predCPHL2)
+pred2.to_csv("WINDCPHL2.csv")
+pred3 = pd.DataFrame(predCPHL3)
+pred3.to_csv("WINDCPHL3.csv")
+pred4 = pd.DataFrame(predCPHL4)
+pred4.to_csv("WINDCPHL4.csv")
 
-TEMPtest0 = pd.DataFrame(TEMPtest0)
-TEMPtest0.to_csv("TEMP0truPAR.csv")
-TEMPtest1 = pd.DataFrame(TEMPtest1)
-TEMPtest1.to_csv("TEMP1truPAR.csv")
-TEMPtest2 = pd.DataFrame(TEMPtest2)
-TEMPtest2.to_csv("TEMP2truPAR.csv")
-TEMPtest3 = pd.DataFrame(TEMPtest3)
-TEMPtest3.to_csv("TEMP3truPAR.csv")
-TEMPtest4 = pd.DataFrame(TEMPtest4)
-TEMPtest4.to_csv("TEMP4truPAR.csv")
+WINDtest0 = pd.DataFrame(WINDtestCPHL0)
+WINDtest0.to_csv("WINDCPHL0tru.csv")
+WINDtest1 = pd.DataFrame(WINDtestCPHL1)
+WINDtest1.to_csv("WINDCPHL1tru.csv")
+WINDtest2 = pd.DataFrame(WINDtestCPHL2)
+WINDtest2.to_csv("WINDCPHL2tru.csv")
+WINDtest3 = pd.DataFrame(WINDtestCPHL3)
+WINDtest3.to_csv("WINDCPHL3tru.csv")
+WINDtest4 = pd.DataFrame(WINDtestCPHL4)
+WINDtest4.to_csv("WINDCPHL4tru.csv")
+
+
+
+
+
+
 
 
 

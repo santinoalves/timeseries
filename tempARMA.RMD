@@ -1,7 +1,7 @@
 ---
-title: "ARIMAFULLDATAwwsh"
+title: "ARIMAtemp"
 author: "Connor Simpson"
-date: "09/02/2020"
+date: "10/02/2020"
 output: html_document
 ---
 
@@ -17,10 +17,16 @@ accuracy = forecast::accuracy
 ```
 
 ```{r}
-biochem = read.csv("bioChemAll43.csv")
-biochem = biochem[-1]
+data = read.csv("darwinBiochem.csv")
 ```
 
+```{r}
+TEMP = data[,"TEMP"]
+CNDC = data[,'CNDC']
+TURB = data[,"TURB"]
+PAR = data[,"PAR"]
+CPHL = data[,"CPHL"]
+```
 
 
 ```{r}
@@ -196,78 +202,18 @@ crossvalidnox <- function(ts,k,h,order,tsori){
 }
 ```
 
-```{r}
-WWSH = biochem[,"darwinWave_WWSH_0"]
-WINDSPD0 = biochem[,"darwinWind_WSPD_30min_0"]
-WINDSPD1 = biochem[,"darwinWind_WSPD_30min_1"]
-WINDSPD2 = biochem[,"darwinWind_WSPD_30min_2"]
-WINDSPD3 = biochem[,"darwinWind_WSPD_30min_3"]
-darCNDC0 = biochem[,"darwinBiochem_CNDC_0"]
-darCNDC1 = biochem[,"darwinBiochem_CNDC_1"]
-darCNDC2 = biochem[,"darwinBiochem_CNDC_2"]
-darCNDC3 = biochem[,"darwinBiochem_CNDC_3"]
-darCNDC4 = biochem[,"darwinBiochem_CNDC_4"]
-darCNDC5 = biochem[,"darwinBiochem_CNDC_5"]
-darCNDC6 = biochem[,"darwinBiochem_CNDC_6"]
-darTEMP0 = biochem[,"darwinBiochem_TEMP_0"]
-darTEMP1 = biochem[,"darwinBiochem_TEMP_1"]
-darTEMP2 = biochem[,"darwinBiochem_TEMP_2"]
-darTEMP3 = biochem[,"darwinBiochem_TEMP_3"]
-darTEMP4 = biochem[,"darwinBiochem_TEMP_4"]
-darTEMP5 = biochem[,"darwinBiochem_TEMP_5"]
-darTEMP6 = biochem[,"darwinBiochem_TEMP_6"]
-darTURB0 = biochem[,"darwinBiochem_TURB_0"]
-darTURB1 = biochem[,"darwinBiochem_TURB_1"]
-darTURB2 = biochem[,"darwinBiochem_TURB_2"]
-darTURB3 = biochem[,"darwinBiochem_TURB_3"]
-darTURB4 = biochem[,"darwinBiochem_TURB_4"]
-darTURB5 = biochem[,"darwinBiochem_TURB_5"]
-darTURB6 = biochem[,"darwinBiochem_TURB_6"]
-darCPHL0 = biochem[,"darwinBiochem_CPHL_0"]
-darCPHL1 = biochem[,"darwinBiochem_CPHL_1"]
-darCPHL2 = biochem[,"darwinBiochem_CPHL_2"]
-darCPHL3 = biochem[,"darwinBiochem_CPHL_3"]
-darCPHL4 = biochem[,"darwinBiochem_CPHL_4"]
-darCPHL5 = biochem[,"darwinBiochem_CPHL_5"]
-darCPHL6 = biochem[,"darwinBiochem_CPHL_6"]
-darPAR0 = biochem[,"darwinBiochem_PAR_0"]
-darPAR1 = biochem[,"darwinBiochem_PAR_1"]
-darPAR2 = biochem[,"darwinBiochem_PAR_2"]
-darPAR3 = biochem[,"darwinBiochem_PAR_3"]
-darPAR4 = biochem[,"darwinBiochem_PAR_4"]
-darPAR5 = biochem[,"darwinBiochem_PAR_5"]
-darPAR6 = biochem[,"darwinBiochem_PAR_6"]
-darCNDC0 = biochem[,"darwinBiochem_CNDC_0"]
-darCNDC1 = biochem[,"darwinBiochem_CNDC_1"]
-darCNDC2 = biochem[,"darwinBiochem_CNDC_2"]
-darCNDC3 = biochem[,"darwinBiochem_CNDC_3"]
-darCNDC4 = biochem[,"darwinBiochem_CNDC_4"]
-darCNDC5 = biochem[,"darwinBiochem_CNDC_5"]
-darCNDC6 = biochem[,"darwinBiochem_CNDC_6"]
-```
-
-
-```{r}
-WINDSPDall = data.frame(diff(WINDSPD0),diff(WINDSPD1),diff(WINDSPD2),diff(WINDSPD3))
-darCNDCALL = data.frame(diff(darCNDC0),diff(darCNDC1),diff(darCNDC2),diff(darCNDC3),diff(darCNDC4),diff(darCNDC5),diff(darCNDC6))
-darTEMPALL = data.frame(diff(darTEMP0),diff(darTEMP1),diff(darTEMP2),diff(darTEMP3),diff(darTEMP4),diff(darTEMP5),diff(darTEMP6))
-darTURBALL = data.frame(diff(darTURB0),diff(darTURB1),diff(darTURB2),diff(darTURB3),diff(darTURB4),diff(darTURB5),diff(darTURB6))
-darPARALL = data.frame(diff(darPAR0),diff(darPAR1),diff(darPAR2),diff(darPAR3),diff(darPAR4),diff(darPAR5),diff(darPAR6))
-darCPHLALL = data.frame(diff(darCPHL0),diff(darCPHL1),diff(darCPHL2),diff(darCPHL3),diff(darCPHL4),diff(darCPHL5),diff(darCPHL6))
-darCNDCALL = data.frame(diff(darCNDC0),diff(darCNDC1),diff(darCNDC2),diff(darCNDC3),diff(darCNDC4),diff(darCNDC5),diff(darCNDC6))
-```
 
 
 ```{r}
 
 er = c(0,0,0,0,0)
-WWSHAR = data.frame(er)
-WWSHMA = data.frame(er)
-for (i in (1:15)){
-  WWSHAR[i] = as.matrix(crossvalidnox(diff(WWSH),5,100,c(i,0,0),WWSH))
+TEMPAR = data.frame(er)
+TEMPMA = data.frame(er)
+for (i in (1:10)){
+  TEMPAR[i] = as.matrix(crossvalidnox(diff(TEMP),5,100,c(i,0,0),TEMP))
 }
-for (i in (1:15)){
-  WWSHMA[i] = as.matrix(crossvalidnox(diff(WWSH),5,100,c(0,0,i),WWSH))
+for (i in (1:10)){
+  TEMPMA[i] = as.matrix(crossvalidnox(diff(TEMP),5,100,c(0,0,i),TEMP))
 }
 ```
 
@@ -276,42 +222,13 @@ for (i in (1:15)){
 ```{r}
 
 er = c(0,0,0,0,0)
-WWSHARWindAR = data.frame(er)
-WWSHARWindMA = data.frame(er)
+TEMPARCNDC = data.frame(er)
+TEMPMACNDC = data.frame(er)
 for (i in (1:10)){
-  WWSHARWindAR[i] = as.matrix(crossvalid(diff(WWSH),WINDSPDall,5,100,c(i,0,0),WWSH))
+  TEMPARCNDC[i] = as.matrix(crossvalid(diff(TEMP),data.frame(diff(CNDC)),5,100,c(i,0,0),TEMP))
 }
 for (i in (1:10)){
-  WWSHARWindMA[i] = as.matrix(crossvalid(diff(WWSH),WINDSPDall,5,100,c(0,0,i),WWSH))
-}
-```
-
-
-```{r}
-
-er = c(0,0,0,0,0)
-WWSHARTURBAR = data.frame(er)
-WWSHARTURBMA = data.frame(er)
-for (i in (1:10)){
-  WWSHARTURBAR[i] = as.matrix(crossvalid(diff(WWSH),darTURBALL,5,100,c(i,0,0),WWSH))
-}
-
-for (i in (1:10)){
-  WWSHARTURBMA[i] = as.matrix(crossvalid(diff(WWSH),darTURBALL,5,100,c(0,0,i),WWSH))
-}
-```
-
-```{r}
-
-er = c(0,0,0,0,0)
-WWSHARPARAR = data.frame(er)
-WWSHARPARMA = data.frame(er)
-for (i in (1:10)){
-  WWSHARPARAR[i] = as.matrix(crossvalid(diff(WWSH),darPARALL,5,100,c(i,0,0),WWSH))
-}
-
-for (i in (1:10)){
-  WWSHARPARMA[i] = as.matrix(crossvalid(diff(WWSH),darPARALL,5,100,c(0,0,i),WWSH))
+  TEMPMACNDC[i] = as.matrix(crossvalid(diff(TEMP),data.frame(diff(CNDC)),5,100,c(0,0,i),TEMP))
 }
 ```
 
@@ -319,52 +236,137 @@ for (i in (1:10)){
 ```{r}
 
 er = c(0,0,0,0,0)
-WWSHARCPHLAR = data.frame(er)
-WWSHARCPHLMA = data.frame(er)
+TEMPARPAR = data.frame(er)
+TEMPMAPAR = data.frame(er)
 for (i in (1:10)){
-  WWSHARCPHLAR[i] = as.matrix(crossvalid(diff(WWSH),darCPHLALL,5,100,c(i,0,0),WWSH))
+  TEMPARPAR[i] = as.matrix(crossvalid(diff(TEMP),data.frame(diff(PAR)),5,100,c(i,0,0),TEMP))
 }
-
 for (i in (1:10)){
-  WWSHARCPHLMA[i] = as.matrix(crossvalid(diff(WWSH),darCPHLALL,5,100,c(0,0,i),WWSH))
+  TEMPMAPAR[i] = as.matrix(crossvalid(diff(TEMP),data.frame(diff(PAR)),5,100,c(0,0,i),TEMP))
+}
+```
+
+
+
+```{r}
+
+er = c(0,0,0,0,0)
+TEMPARTURB = data.frame(er)
+TEMPMATURB = data.frame(er)
+for (i in (1:10)){
+  TEMPARTURB[i] = as.matrix(crossvalid(diff(TEMP),data.frame(diff(TURB)),5,100,c(i,0,0),TEMP))
+}
+for (i in (1:10)){
+  TEMPMATURB[i] = as.matrix(crossvalid(diff(TEMP),data.frame(diff(TURB)),5,100,c(0,0,i),TEMP))
+}
+```
+
+
+```{r}
+
+er = c(0,0,0,0,0)
+TEMPARCPHL = data.frame(er)
+TEMPMACPHL = data.frame(er)
+for (i in (1:10)){
+  TEMPARCPHL[i] = as.matrix(crossvalid(diff(TEMP),data.frame(diff(CPHL)),5,100,c(i,0,0),TEMP))
+}
+for (i in (1:10)){
+  TEMPMACPHL[i] = as.matrix(crossvalid(diff(TEMP),data.frame(diff(CPHL)),5,100,c(0,0,i),TEMP))
+}
+```
+
+
+
+#########################################
+
+```{r}
+
+er = c(0,0,0,0,0)
+CNDCAR = data.frame(er)
+CNDCMA = data.frame(er)
+for (i in (1:10)){
+  CNDCAR[i] = as.matrix(crossvalidnox(diff(CNDC),5,100,c(i,0,0),CNDC))
+}
+for (i in (1:10)){
+  CNDCMA[i] = as.matrix(crossvalidnox(diff(CNDC),5,100,c(0,0,i),CNDC))
+}
+```
+
+
+
+```{r}
+
+er = c(0,0,0,0,0)
+CNDCARTEMP = data.frame(er)
+CNDCMATEMP = data.frame(er)
+for (i in (1:10)){
+  CNDCARTEMP[i] = as.matrix(crossvalid(diff(CNDC),data.frame(diff(TEMP)),5,100,c(i,0,0),CNDC))
+}
+for (i in (1:10)){
+  CNDCMATEMP[i] = as.matrix(crossvalid(diff(CNDC),data.frame(diff(TEMP)),5,100,c(0,0,i),CNDC))
+}
+```
+
+
+```{r}
+
+er = c(0,0,0,0,0)
+CNDCARPAR = data.frame(er)
+CNDCMAPAR = data.frame(er)
+for (i in (1:10)){
+  CNDCARPAR[i] = as.matrix(crossvalid(diff(CNDC),data.frame(diff(PAR)),5,100,c(i,0,0),CNDC))
+}
+for (i in (1:10)){
+  CNDCMAPAR[i] = as.matrix(crossvalid(diff(CNDC),data.frame(diff(PAR)),5,100,c(0,0,i),CNDC))
+}
+```
+
+
+
+```{r}
+
+er = c(0,0,0,0,0)
+CNDCARTURB = data.frame(er)
+CNDCMATURB = data.frame(er)
+for (i in (1:10)){
+  CNDCARTURB[i] = as.matrix(crossvalid(diff(CNDC),data.frame(diff(TURB)),5,100,c(i,0,0),CNDC))
+}
+for (i in (1:10)){
+  CNDCMATURB[i] = as.matrix(crossvalid(diff(CNDC),data.frame(diff(TURB)),5,100,c(0,0,i),CNDC))
+}
+```
+
+
+```{r}
+
+er = c(0,0,0,0,0)
+CNDCARCPHL = data.frame(er)
+CNDCMACPHL = data.frame(er)
+for (i in (1:10)){
+  CNDCARCPHL[i] = as.matrix(crossvalid(diff(CNDC),data.frame(diff(CPHL)),5,100,c(i,0,0),CNDC))
+}
+for (i in (1:10)){
+  CNDCMACPHL[i] = as.matrix(crossvalid(diff(CNDC),data.frame(diff(CPHL)),5,100,c(0,0,i),CNDC))
 }
 ```
 
 ```{r}
-er = c(0,0,0,0,0)
-WWSHARCNDCAR = data.frame(er)
-WWSHARCNDCMA = data.frame(er)
-for (i in (1:10)){
-  WWSHARCNDCAR[i] = as.matrix(crossvalid(diff(WWSH),darCNDCALL,5,100,c(i,0,0),WWSH))
-}
-
-for (i in (1:10)){
-  WWSHARCNDCMA[i] = as.matrix(crossvalid(diff(WWSH),darCNDCALL,5,100,c(0,0,i),WWSH))
-}
+plot.ts(diff(TEMP)[0:70000])
 ```
+
+
 
 
 ```{r}
-er = c(0,0,0,0,0)
-WWSHARTEMPAR = data.frame(er)
-WWSHARTEMPMA = data.frame(er)
-for (i in (1:10)){
-  WWSHARTEMPAR[i] = as.matrix(crossvalid(diff(WWSH),darTEMPALL,5,100,c(i,0,0),WWSH))
-}
-
-for (i in (1:10)){
-  WWSHARTEMPMA[i] = as.matrix(crossvalid(diff(WWSH),darTEMPALL,5,100,c(0,0,i),WWSH))
-}
+Acf(diff(TEMP))
+Pacf(diff(TEMP))
 ```
-
-
-
 
 
 
 ```{r}
 avWWSHAR = data.frame(row.names=c('arsq','WMAPE','rmse','reler'))
-wwshdata = WWSHARWindMA
+wwshdata = CNDCMACPHL
 for (i in (1:4)){
   errora = c()
   sder = c()
@@ -389,32 +391,6 @@ for (i in (1:4)){
 }
 colnames(avWWSHAR) = c('error','order','sd')
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

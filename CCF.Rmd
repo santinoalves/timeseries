@@ -19,12 +19,31 @@ lag = stats::lag
 
 
 ```{r}
-data = read.csv("bioChemAll.csv")
+data = read.csv("bioChemAll43.csv")
 ```
+
+```{r}
+setwd("C:/Users/Connor Simpson/Desktop/New folder (2)/r/Rstuff/data2/data3")
+data = read.csv("darwinBiochem.csv")
+```
+
+```{r}
+setwd("C:/Users/Connor Simpson/Desktop/New folder (2)/r/Rstuff/data2/data3")
+dataccf = read.csv("darwinBiochem.csv")
+dataccf = dataccf[-1]
+```
+```{r}
+head(dataccf)
+```
+
+
 ```{r}
 data2 = data[-1]
 head(data2)
 ```
+
+
+
 
 ```{r}
 maxCCF = matrix(nrow = length(data2),ncol = length(data2),dimnames =list(names(data2),names(data2)))
@@ -38,11 +57,260 @@ for (i in (1:length(data2))){
 }
 ```
 
+```{r}
+temporary3 = data.frame(sort(maxCCF[,'darwinBiochem_TEMP_0'],decreasing = T))
+```
 
 
 ```{r}
-maxCCF
+maxCCF2 = matrix(nrow = length(dataccf),ncol = length(dataccf),dimnames =list(names(dataccf),names(dataccf)))
+for (i in (1:length(dataccf))){
+  for (j in (1:length(dataccf))){
+        a=ccf(diff(dataccf[,i]),diff(dataccf[,j]),type=c("correlation","covariance"),plot=F,na.action = na.pass)
+        maxCCF2[i,j] = max(abs(a$acf))  
+    
+    
+  }
+}
 ```
+
+```{r}
+temporary4 = data.frame(sort(maxCCF2[,'CNDC'],decreasing = T))
+```
+
+```{r}
+stationadf = c()
+stationkpss = c()
+for (i in (1:length(data2))){
+  stationadf[i] = adf.test(diff(na.omit(data2[,i])))[4]
+  stationkpss[i] = kpss.test(diff(na.omit(data2[,i])))[3]
+}
+```
+
+```{r}
+stationadf
+stationkpss
+```
+
+
+
+```{r}
+adf.test(data2[-length(data2[,6]),6])
+kpss.test(data2[,6])
+```
+
+
+
+```{r}
+plot.ts(data2[,1])
+a = data2[,2]
+plot.ts(a[which(a>5)])
+b = data2[,3]
+plot.ts(data2[,3])
+```
+```{r}
+plot.ts(diff(data2[,1]))
+a = data2[,2]
+plot.ts(diff(a[which(a>5)]))
+b = data2[,3]
+plot.ts(diff(data2[,6]))
+```
+
+
+```{r}
+ccf(data2[,1],data2[,2],type=c("correlation","covariance"),plot=T,na.action = na.pass)
+```
+
+
+
+
+```{r}
+temporary2 = data.frame(sort(maxCCF[,'darwinBiochem_TEMP_0'],decreasing = T))
+```
+
+
+```{r}
+adf.test(diff(data2[,3]))
+kpss.test(diff(data2[,3]))
+```
+
+```{r}
+plot.ts(data2[,3])
+```
+```{r}
+acf(diff(data2[,1]))
+pacf(diff(data2[,1]))
+
+```
+
+
+```{r}
+ccf(diff(diff(data2[,3])),diff(data2[,1]))
+```
+
+```{r}
+mod0 = Arima(diff(data2[,1]),order=c(2,0,0))
+mod0.5 = Arima(diff(data2[,1]),order=c(2,0,1))
+mod1 = Arima(diff(data2[,1]),order=c(2,0,0),xreg = diff(data2[,2]))
+mod2 = Arima(diff(data2[,1]),order=c(2,0,0),xreg = diff(data2[,3]))
+```
+
+```{r}
+summary(mod0)
+summary(mod0.5)
+summary(mod1)
+summary(mod2)
+```
+
+```{r}
+tsdiff = diff(data2[,1])
+k = 4
+h = 50
+v = as.integer(length(tsdiff)/(2*k))
+size = 2*v+1
+error = rep(NA,(k-1))
+for (i in (0:(k-1))){
+  if (i == 0){z = 0}
+  else{z=1}
+    if (i == k-1){z2 = 0}
+  else{z2=1}
+  test = rep(NA,length(tsdiff))
+  train = tsdiff
+  test[((size)*i+1):((size)*i+size)] = tsdiff[((size)*i+1):((size)*i+size)]
+  train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+  plot.ts(test,col=2)
+  lines(train,col=3)
+  mod = Arima(train,order = c(2,0,0))
+  modt = Arima(test,model = mod)
+  error[i+1] = accuracy(modt)[2]
+  print(accuracy(modt))
+}
+```
+
+
+
+```{r}
+tsdiff = diff(data2[,1])
+texo = diff(data2[,2])
+k = 4
+h = 50
+v = as.integer(length(tsdiff)/(2*k))
+size = 2*v+1
+error = rep(NA,(k-1))
+for (i in (0:(k-1))){
+  if (i == 0){z = 0}
+  else{z=1}
+    if (i == k-1){z2 = 0}
+  else{z2=1}
+  test = rep(NA,length(tsdiff))
+  testx = rep(NA,length(texo))
+  train = tsdiff
+  trainx = texo
+  test[((size)*i+1):((size)*i+size)] = tsdiff[((size)*i+1):((size)*i+size)]
+  testx[((size)*i+1):((size)*i+size)] = texo[((size)*i+1):((size)*i+size)]
+  train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+  trainx[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+  plot.ts(test,col=2)
+  lines(train,col=3)
+  mod = Arima(train,order = c(2,0,0),xreg = trainx)
+  modt = Arima(test,model = mod,xreg=testx)
+  error[i+1] = accuracy(modt)[2]
+  print(accuracy(modt))
+}
+```
+
+
+```{r}
+traina = tsdiff[1:15000]
+trainxa = texo[1:15000]
+testxa = texo[15001:length(texo)]
+mod1 = Arima(traina,order=c(2,0,0),xreg=trainxa)
+plot(forecast(mod1,xreg = na.omit(testxa)))
+```
+
+
+
+```{r}
+tsdiff = diff(data2[,1])
+texo = diff(data2[,3])
+k = 4
+h = 50
+v = as.integer(length(tsdiff)/(2*k))
+size = 2*v+1
+error = rep(NA,(k-1))
+for (i in (0:(k-1))){
+  if (i == 0){z = 0}
+  else{z=1}
+    if (i == k-1){z2 = 0}
+  else{z2=1}
+  test = rep(NA,length(tsdiff))
+  testx = rep(NA,length(texo))
+  train = tsdiff
+  trainx = texo
+  test[((size)*i+1):((size)*i+size)] = tsdiff[((size)*i+1):((size)*i+size)]
+  testx[((size)*i+1):((size)*i+size)] = texo[((size)*i+1):((size)*i+size)]
+  train[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+  trainx[((size)*i+1-h*z):((size)*i+size+h*z2)] = NA
+  plot.ts(test,col=2)
+  lines(train,col=3)
+  mod = Arima(train,order = c(2,0,0),xreg = trainx)
+  modt = Arima(test,model = mod,xreg=testx)
+  error[i+1] = accuracy(modt)[2]
+  print(accuracy(modt))
+}
+```
+
+
+
+
+
+
+
+
+```{r}
+plot.ts(diff(data2[,1]))
+```
+
+
+
+```{r}
+mod1 = Arima(diff(data2[,1]),order=c(0,0,0),xreg = diff(data2[,2]))
+summary(mod1)
+
+```
+
+```{r}
+ plot.ts(diff(data2[,3]))
+```
+
+
+```{r}
+mod1 = Arima(diff(data2[,1]),order=c(2,0,0),xreg = diff(data2[,3]))
+summary(mod1)
+
+```
+
+```{r}
+exog1 = diff(data2[,3])
+exog2 = diff(data2[,9])
+exog = data.frame(exog1,exog2)
+modx = Arima(diff(data2[,1]),order=c(2,0,0),xreg = exog)
+summary(modx)
+```
+
+
+```{r}
+exog1 = diff(data2[,3])
+exog2 = diff(data2[,9])
+exog = data.frame(exog1,exog2)
+modx = Arima(diff(data2[,1]),order=c(2,0,0),xreg = exog)
+summary(modx)
+```
+
+
+
+
+
 
 
 

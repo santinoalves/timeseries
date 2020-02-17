@@ -88,3 +88,174 @@ TEMPtest3 = pd.DataFrame(TEMPtest3)
 TEMPtest3.to_csv("TEMP3tru.csv")
 TEMPtest4 = pd.DataFrame(TEMPtest4)
 TEMPtest4.to_csv("TEMP4tru.csv")
+
+
+
+TEMPxtemptrain = pd.concat([TEMPTraindata,TEMPTraindataxCNDC],axis=1)
+TEMPxtemptest = pd.concat([TEMPTestdata,TEMPtestdataxCNDC],axis=1)
+for i in range(0,5):
+    TEMPdata = TEMPxtemptrain.iloc[:,[i,i+5]]
+    TEMPdata = TEMPdata.dropna()
+    TEMPtrain = TEMPdata.iloc[:,0]
+    temptrain = TEMPdata.iloc[:,[1]]
+    
+    regressorTEMPxtemp = MLPRegressor()
+    regressorTEMPxtemp.fit(temptrain,TEMPtrain)
+    
+    TEMPdatatest = TEMPxtemptest.iloc[:,[i,i+5]]
+    TEMPdatatest = TEMPdatatest.dropna()
+    TEMPdatatest = TEMPdatatest.reset_index().iloc[:,1:]
+    globals()['TEMPtest'+str(i)]  = TEMPdatatest.iloc[:,0]
+    temptest = TEMPdatatest.iloc[:,[1]]
+    globals()['predCNDC'+str(i)] = regressorTEMPxtemp.predict(temptest)
+
+
+predCNDC0 = pd.DataFrame(predCNDC0)
+predCNDC0.to_csv("TEMP0CNDC.csv")
+predCNDC1 = pd.DataFrame(predCNDC1)
+predCNDC1.to_csv("TEMP1CNDC.csv")
+predCNDC2 = pd.DataFrame(predCNDC2)
+predCNDC2.to_csv("TEMP2CNDC.csv")
+predCNDC3 = pd.DataFrame(predCNDC3)
+predCNDC3.to_csv("TEMP3CNDC.csv")
+predCNDC4 = pd.DataFrame(predCNDC4)
+predCNDC4.to_csv("TEMP4CNDC.csv")
+
+TEMPtest0 = pd.DataFrame(TEMPtest0)
+TEMPtest0.to_csv("TEMP0truCNDC.csv")
+TEMPtest1 = pd.DataFrame(TEMPtest1)
+TEMPtest1.to_csv("TEMP1truCNDC.csv")
+TEMPtest2 = pd.DataFrame(TEMPtest2)
+TEMPtest2.to_csv("TEMP2truCNDC.csv")
+TEMPtest3 = pd.DataFrame(TEMPtest3)
+TEMPtest3.to_csv("TEMP3truCNDC.csv")
+TEMPtest4 = pd.DataFrame(TEMPtest4)
+TEMPtest4.to_csv("TEMP4truCNDC.csv")
+
+
+
+TEMPxtemptrain = pd.concat([TEMPTraindata,TEMPTraindataxTURB],axis=1)
+TEMPxtemptest = pd.concat([TEMPTestdata,TEMPtestdataxTURB],axis=1)
+for i in range(0,5):
+    TEMPdata = TEMPxtemptrain.iloc[:,[i,i+5]]
+    TEMPdata = TEMPdata.dropna()
+    TEMPtrain = TEMPdata.iloc[:,0]
+    temptrain = TEMPdata.iloc[:,[1]]
+    
+    regressorTEMPxtemp = MLPRegressor()
+    regressorTEMPxtemp.fit(temptrain,TEMPtrain)
+    
+    TEMPdatatest = TEMPxtemptest.iloc[:,[i,i+5]]
+    TEMPdatatest = TEMPdatatest.dropna()
+    TEMPdatatest = TEMPdatatest.reset_index().iloc[:,1:]
+    globals()['TEMPtest'+str(i)]  = TEMPdatatest.iloc[:,0]
+    temptest = TEMPdatatest.iloc[:,[1]]
+    globals()['predTURB'+str(i)] = regressorTEMPxtemp.predict(temptest)
+
+
+predTURB0 = pd.DataFrame(predTURB0)
+predTURB0.to_csv("TEMP0TURB.csv")
+predTURB1 = pd.DataFrame(predTURB1)
+predTURB1.to_csv("TEMP1TURB.csv")
+predTURB2 = pd.DataFrame(predTURB2)
+predTURB2.to_csv("TEMP2TURB.csv")
+predTURB3 = pd.DataFrame(predTURB3)
+predTURB3.to_csv("TEMP3TURB.csv")
+predTURB4 = pd.DataFrame(predTURB4)
+predTURB4.to_csv("TEMP4TURB.csv")
+
+TEMPtest0 = pd.DataFrame(TEMPtest0)
+TEMPtest0.to_csv("TEMP0truTURB.csv")
+TEMPtest1 = pd.DataFrame(TEMPtest1)
+TEMPtest1.to_csv("TEMP1truTURB.csv")
+TEMPtest2 = pd.DataFrame(TEMPtest2)
+TEMPtest2.to_csv("TEMP2truTURB.csv")
+TEMPtest3 = pd.DataFrame(TEMPtest3)
+TEMPtest3.to_csv("TEMP3truTURB.csv")
+TEMPtest4 = pd.DataFrame(TEMPtest4)
+TEMPtest4.to_csv("TEMP4truTURB.csv")
+
+
+TEMPxtemptrain = pd.concat([TEMPTraindata,TEMPTraindataxCPHL],axis=1)
+TEMPxtemptest = pd.concat([TEMPTestdata,TEMPtestdataxCPHL],axis=1)
+for i in range(0,5):
+    TEMPdata = TEMPxtemptrain.iloc[:,[i,i+5]]
+    TEMPdata = TEMPdata.dropna()
+    TEMPtrain = TEMPdata.iloc[:,0]
+    temptrain = TEMPdata.iloc[:,[1]]
+    
+    regressorTEMPxtemp = MLPRegressor()
+    regressorTEMPxtemp.fit(temptrain,TEMPtrain)
+    
+    TEMPdatatest = TEMPxtemptest.iloc[:,[i,i+5]]
+    TEMPdatatest = TEMPdatatest.dropna()
+    TEMPdatatest = TEMPdatatest.reset_index().iloc[:,1:]
+    globals()['TEMPtest'+str(i)]  = TEMPdatatest.iloc[:,0]
+    temptest = TEMPdatatest.iloc[:,[1]]
+    globals()['predCPHL'+str(i)] = regressorTEMPxtemp.predict(temptest)
+
+
+predCPHL0 = pd.DataFrame(predCPHL0)
+predCPHL0.to_csv("TEMP0CPHL.csv")
+predCPHL1 = pd.DataFrame(predCPHL1)
+predCPHL1.to_csv("TEMP1CPHL.csv")
+predCPHL2 = pd.DataFrame(predCPHL2)
+predCPHL2.to_csv("TEMP2CPHL.csv")
+predCPHL3 = pd.DataFrame(predCPHL3)
+predCPHL3.to_csv("TEMP3CPHL.csv")
+predCPHL4 = pd.DataFrame(predCPHL4)
+predCPHL4.to_csv("TEMP4CPHL.csv")
+
+TEMPtest0 = pd.DataFrame(TEMPtest0)
+TEMPtest0.to_csv("TEMP0truCPHL.csv")
+TEMPtest1 = pd.DataFrame(TEMPtest1)
+TEMPtest1.to_csv("TEMP1truCPHL.csv")
+TEMPtest2 = pd.DataFrame(TEMPtest2)
+TEMPtest2.to_csv("TEMP2truCPHL.csv")
+TEMPtest3 = pd.DataFrame(TEMPtest3)
+TEMPtest3.to_csv("TEMP3truCPHL.csv")
+TEMPtest4 = pd.DataFrame(TEMPtest4)
+TEMPtest4.to_csv("TEMP4truCPHL.csv")
+
+
+
+TEMPxtemptrain = pd.concat([TEMPTraindata,TEMPTraindataxPAR],axis=1)
+TEMPxtemptest = pd.concat([TEMPTestdata,TEMPtestdataxPAR],axis=1)
+for i in range(0,5):
+    TEMPdata = TEMPxtemptrain.iloc[:,[i,i+5]]
+    TEMPdata = TEMPdata.dropna()
+    TEMPtrain = TEMPdata.iloc[:,0]
+    temptrain = TEMPdata.iloc[:,[1]]
+    
+    regressorTEMPxtemp = MLPRegressor()
+    regressorTEMPxtemp.fit(temptrain,TEMPtrain)
+    
+    TEMPdatatest = TEMPxtemptest.iloc[:,[i,i+5]]
+    TEMPdatatest = TEMPdatatest.dropna()
+    TEMPdatatest = TEMPdatatest.reset_index().iloc[:,1:]
+    globals()['TEMPtest'+str(i)]  = TEMPdatatest.iloc[:,0]
+    temptest = TEMPdatatest.iloc[:,[1]]
+    globals()['predPAR'+str(i)] = regressorTEMPxtemp.predict(temptest)
+
+
+predPAR0 = pd.DataFrame(predPAR0)
+predPAR0.to_csv("TEMP0PAR.csv")
+predPAR1 = pd.DataFrame(predPAR1)
+predPAR1.to_csv("TEMP1PAR.csv")
+predPAR2 = pd.DataFrame(predPAR2)
+predPAR2.to_csv("TEMP2PAR.csv")
+predPAR3 = pd.DataFrame(predPAR3)
+predPAR3.to_csv("TEMP3PAR.csv")
+predPAR4 = pd.DataFrame(predPAR4)
+predPAR4.to_csv("TEMP4PAR.csv")
+
+TEMPtest0 = pd.DataFrame(TEMPtest0)
+TEMPtest0.to_csv("TEMP0truPAR.csv")
+TEMPtest1 = pd.DataFrame(TEMPtest1)
+TEMPtest1.to_csv("TEMP1truPAR.csv")
+TEMPtest2 = pd.DataFrame(TEMPtest2)
+TEMPtest2.to_csv("TEMP2truPAR.csv")
+TEMPtest3 = pd.DataFrame(TEMPtest3)
+TEMPtest3.to_csv("TEMP3truPAR.csv")
+TEMPtest4 = pd.DataFrame(TEMPtest4)
+TEMPtest4.to_csv("TEMP4truPAR.csv")

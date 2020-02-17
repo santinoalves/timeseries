@@ -638,6 +638,7 @@ adjr2 = adjr(pred2,tru2,18)
 adjr3 = adjr(pred3,tru3,18)
 adjr4 = adjr(pred4,tru4,18)
 mean(c(adjr0,adjr1,adjr2,adjr3,adjr4))
+sd(c(adjr0,adjr1,adjr2,adjr3,adjr4))
 ```
 
 ```{r}
@@ -647,6 +648,7 @@ rootMSE2 = rootMSE(pred2,tru2)
 rootMSE3 = rootMSE(pred3,tru3)
 rootMSE4 = rootMSE(pred4,tru4)
 mean(c(rootMSE0,rootMSE1,rootMSE2,rootMSE3,rootMSE4))
+sd(c(rootMSE0,rootMSE1,rootMSE2,rootMSE3,rootMSE4))
 ```
 
 ```{r}
@@ -656,6 +658,7 @@ WMAPE2 = WMAPE(pred2,tru2)
 WMAPE3 = WMAPE(pred3,tru3)
 WMAPE4 = WMAPE(pred4,tru4)
 mean(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
+sd(c(WMAPE0,WMAPE1,WMAPE2,WMAPE3,WMAPE4))
 ```
 
 ############################################
@@ -696,6 +699,7 @@ adjrWind2 = adjr(predWind2,truWind2,4)
 adjrWind3 = adjr(predWind3,truWind3,4)
 adjrWind4 = adjr(predWind4,truWind4,4)
 mean(c(adjrWind0,adjrWind1,adjrWind2,adjrWind3,adjrWind4))
+sd(c(adjrWind0,adjrWind1,adjrWind2,adjrWind3,adjrWind4))
 ```
 
 ```{r}
@@ -705,6 +709,7 @@ rootMSEWind2 = rootMSE(predWind2,truWind2)
 rootMSEWind3 = rootMSE(predWind3,truWind3)
 rootMSEWind4 = rootMSE(predWind4,truWind4)
 mean(c(rootMSEWind0,rootMSEWind1,rootMSEWind2,rootMSEWind3,rootMSEWind4))
+sd(c(rootMSEWind0,rootMSEWind1,rootMSEWind2,rootMSEWind3,rootMSEWind4))
 ```
 
 ```{r}
@@ -714,6 +719,7 @@ WMAPEWind2 = WMAPE(predWind2,truWind2)
 WMAPEWind3 = WMAPE(predWind3,truWind3)
 WMAPEWind4 = WMAPE(predWind4,truWind4)
 mean(c(WMAPEWind0,WMAPEWind1,WMAPEWind2,WMAPEWind3,WMAPEWind4))
+sd(c(WMAPEWind0,WMAPEWind1,WMAPEWind2,WMAPEWind3,WMAPEWind4))
 ```
 
 
@@ -741,12 +747,13 @@ lines(predTemp0)
 
 
 ```{r}
-adjrTemp0 = adjr(predTemp0,truTemp0,4)
-adjrTemp1 = adjr(predTemp1,truTemp1,4)
-adjrTemp2 = adjr(predTemp2,truTemp2,4)
-adjrTemp3 = adjr(predTemp3,truTemp3,4)
-adjrTemp4 = adjr(predTemp4,truTemp4,4)
+adjrTemp0 = adjr(predTemp0,truTemp0,8)
+adjrTemp1 = adjr(predTemp1,truTemp1,8)
+adjrTemp2 = adjr(predTemp2,truTemp2,8)
+adjrTemp3 = adjr(predTemp3,truTemp3,8)
+adjrTemp4 = adjr(predTemp4,truTemp4,8)
 mean(c(adjrTemp0,adjrTemp1,adjrTemp2,adjrTemp3,adjrTemp4))
+sd(c(adjrTemp0,adjrTemp1,adjrTemp2,adjrTemp3,adjrTemp4))
 ```
 
 ```{r}
@@ -756,6 +763,7 @@ rootMSETemp2 = rootMSE(predTemp2,truTemp2)
 rootMSETemp3 = rootMSE(predTemp3,truTemp3)
 rootMSETemp4 = rootMSE(predTemp4,truTemp4)
 mean(c(rootMSETemp0,rootMSETemp1,rootMSETemp2,rootMSETemp3,rootMSETemp4))
+sd(c(rootMSETemp0,rootMSETemp1,rootMSETemp2,rootMSETemp3,rootMSETemp4))
 ```
 
 ```{r}
@@ -765,6 +773,7 @@ WMAPETemp2 = WMAPE(predTemp2,truTemp2)
 WMAPETemp3 = WMAPE(predTemp3,truTemp3)
 WMAPETemp4 = WMAPE(predTemp4,truTemp4)
 mean(c(WMAPETemp0,WMAPETemp1,WMAPETemp2,WMAPETemp3,WMAPETemp4))
+sd(c(WMAPETemp0,WMAPETemp1,WMAPETemp2,WMAPETemp3,WMAPETemp4))
 ```
 
 
@@ -794,12 +803,13 @@ lines(predcndc0)
 
 
 ```{r}
-adjrcndc0 = adjr(predcndc0,trucndc0,4)
-adjrcndc1 = adjr(predcndc1,trucndc1,4)
-adjrcndc2 = adjr(predcndc2,trucndc2,4)
-adjrcndc3 = adjr(predcndc3,trucndc3,4)
-adjrcndc4 = adjr(predcndc4,trucndc4,4)
+adjrcndc0 = adjr(predcndc0,trucndc0,8)
+adjrcndc1 = adjr(predcndc1,trucndc1,8)
+adjrcndc2 = adjr(predcndc2,trucndc2,8)
+adjrcndc3 = adjr(predcndc3,trucndc3,8)
+adjrcndc4 = adjr(predcndc4,trucndc4,8)
 mean(c(adjrcndc0,adjrcndc1,adjrcndc2,adjrcndc3,adjrcndc4))
+sd(c(adjrcndc0,adjrcndc1,adjrcndc2,adjrcndc3,adjrcndc4))
 ```
 
 ```{r}
@@ -809,6 +819,7 @@ rootMSEcndc2 = rootMSE(predcndc2,trucndc2)
 rootMSEcndc3 = rootMSE(predcndc3,trucndc3)
 rootMSEcndc4 = rootMSE(predcndc4,trucndc4)
 mean(c(rootMSEcndc0,rootMSEcndc1,rootMSEcndc2,rootMSEcndc3,rootMSEcndc4))
+sd(c(rootMSEcndc0,rootMSEcndc1,rootMSEcndc2,rootMSEcndc3,rootMSEcndc4))
 ```
 
 ```{r}
@@ -818,6 +829,7 @@ WMAPEcndc2 = WMAPE(predcndc2,trucndc2)
 WMAPEcndc3 = WMAPE(predcndc3,trucndc3)
 WMAPEcndc4 = WMAPE(predcndc4,trucndc4)
 mean(c(WMAPEcndc0,WMAPEcndc1,WMAPEcndc2,WMAPEcndc3,WMAPEcndc4))
+sd(c(WMAPEcndc0,WMAPEcndc1,WMAPEcndc2,WMAPEcndc3,WMAPEcndc4))
 ```
 
 
@@ -847,12 +859,13 @@ lines(predpar0)
 
 
 ```{r}
-adjrpar0 = adjr(predpar0,trupar0,4)
-adjrpar1 = adjr(predpar1,trupar1,4)
-adjrpar2 = adjr(predpar2,trupar2,4)
-adjrpar3 = adjr(predpar3,trupar3,4)
-adjrpar4 = adjr(predpar4,trupar4,4)
+adjrpar0 = adjr(predpar0,trupar0,8)
+adjrpar1 = adjr(predpar1,trupar1,8)
+adjrpar2 = adjr(predpar2,trupar2,8)
+adjrpar3 = adjr(predpar3,trupar3,8)
+adjrpar4 = adjr(predpar4,trupar4,8)
 mean(c(adjrpar0,adjrpar1,adjrpar2,adjrpar3,adjrpar4))
+sd(c(adjrpar0,adjrpar1,adjrpar2,adjrpar3,adjrpar4))
 ```
 
 ```{r}
@@ -862,6 +875,7 @@ rootMSEpar2 = rootMSE(predpar2,trupar2)
 rootMSEpar3 = rootMSE(predpar3,trupar3)
 rootMSEpar4 = rootMSE(predpar4,trupar4)
 mean(c(rootMSEpar0,rootMSEpar1,rootMSEpar2,rootMSEpar3,rootMSEpar4))
+sd(c(rootMSEpar0,rootMSEpar1,rootMSEpar2,rootMSEpar3,rootMSEpar4))
 ```
 
 ```{r}
@@ -871,6 +885,7 @@ WMAPEpar2 = WMAPE(predpar2,trupar2)
 WMAPEpar3 = WMAPE(predpar3,trupar3)
 WMAPEpar4 = WMAPE(predpar4,trupar4)
 mean(c(WMAPEpar0,WMAPEpar1,WMAPEpar2,WMAPEpar3,WMAPEpar4))
+sd(c(WMAPEpar0,WMAPEpar1,WMAPEpar2,WMAPEpar3,WMAPEpar4))
 ```
 
 
@@ -899,12 +914,13 @@ lines(predturb0)
 
 
 ```{r}
-adjrturb0 = adjr(predturb0,truturb0,4)
-adjrturb1 = adjr(predturb1,truturb1,4)
-adjrturb2 = adjr(predturb2,truturb2,4)
-adjrturb3 = adjr(predturb3,truturb3,4)
-adjrturb4 = adjr(predturb4,truturb4,4)
+adjrturb0 = adjr(predturb0,truturb0,8)
+adjrturb1 = adjr(predturb1,truturb1,8)
+adjrturb2 = adjr(predturb2,truturb2,8)
+adjrturb3 = adjr(predturb3,truturb3,8)
+adjrturb4 = adjr(predturb4,truturb4,8)
 mean(c(adjrturb0,adjrturb1,adjrturb2,adjrturb3,adjrturb4))
+sd(c(adjrturb0,adjrturb1,adjrturb2,adjrturb3,adjrturb4))
 ```
 
 ```{r}
@@ -914,6 +930,7 @@ rootMSEturb2 = rootMSE(predturb2,truturb2)
 rootMSEturb3 = rootMSE(predturb3,truturb3)
 rootMSEturb4 = rootMSE(predturb4,truturb4)
 mean(c(rootMSEturb0,rootMSEturb1,rootMSEturb2,rootMSEturb3,rootMSEturb4))
+sd(c(rootMSEturb0,rootMSEturb1,rootMSEturb2,rootMSEturb3,rootMSEturb4))
 ```
 
 ```{r}
@@ -923,6 +940,7 @@ WMAPEturb2 = WMAPE(predturb2,truturb2)
 WMAPEturb3 = WMAPE(predturb3,truturb3)
 WMAPEturb4 = WMAPE(predturb4,truturb4)
 mean(c(WMAPEturb0,WMAPEturb1,WMAPEturb2,WMAPEturb3,WMAPEturb4))
+sd(c(WMAPEturb0,WMAPEturb1,WMAPEturb2,WMAPEturb3,WMAPEturb4))
 ```
 
 
@@ -952,12 +970,13 @@ lines(predcphl0)
 
 
 ```{r}
-adjrcphl0 = adjr(predcphl0,trucphl0,4)
-adjrcphl1 = adjr(predcphl1,trucphl1,4)
-adjrcphl2 = adjr(predcphl2,trucphl2,4)
-adjrcphl3 = adjr(predcphl3,trucphl3,4)
-adjrcphl4 = adjr(predcphl4,trucphl4,4)
+adjrcphl0 = adjr(predcphl0,trucphl0,8)
+adjrcphl1 = adjr(predcphl1,trucphl1,8)
+adjrcphl2 = adjr(predcphl2,trucphl2,8)
+adjrcphl3 = adjr(predcphl3,trucphl3,8)
+adjrcphl4 = adjr(predcphl4,trucphl4,8)
 mean(c(adjrcphl0,adjrcphl1,adjrcphl2,adjrcphl3,adjrcphl4))
+sd(c(adjrcphl0,adjrcphl1,adjrcphl2,adjrcphl3,adjrcphl4))
 ```
 
 ```{r}
@@ -967,6 +986,7 @@ rootMSEcphl2 = rootMSE(predcphl2,trucphl2)
 rootMSEcphl3 = rootMSE(predcphl3,trucphl3)
 rootMSEcphl4 = rootMSE(predcphl4,trucphl4)
 mean(c(rootMSEcphl0,rootMSEcphl1,rootMSEcphl2,rootMSEcphl3,rootMSEcphl4))
+sd(c(rootMSEcphl0,rootMSEcphl1,rootMSEcphl2,rootMSEcphl3,rootMSEcphl4))
 ```
 
 ```{r}
@@ -976,6 +996,7 @@ WMAPEcphl2 = WMAPE(predcphl2,trucphl2)
 WMAPEcphl3 = WMAPE(predcphl3,trucphl3)
 WMAPEcphl4 = WMAPE(predcphl4,trucphl4)
 mean(c(WMAPEcphl0,WMAPEcphl1,WMAPEcphl2,WMAPEcphl3,WMAPEcphl4))
+sd(c(WMAPEcphl0,WMAPEcphl1,WMAPEcphl2,WMAPEcphl3,WMAPEcphl4))
 ```
 
 

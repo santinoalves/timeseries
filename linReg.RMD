@@ -32,6 +32,7 @@ darCNDC32 = data42[,"darwinBiochem_CNDC_3"]
 darCNDC42 = data42[,"darwinBiochem_CNDC_4"]
 darCNDC52 = data42[,"darwinBiochem_CNDC_5"]
 darCNDC62 = data42[,"darwinBiochem_CNDC_6"]
+darCNDC72 = data42[,"darwinBiochem_CNDC_7"]
 darTEMP02 = data42[,"darwinBiochem_TEMP_0"]
 darTEMP12 = data42[,"darwinBiochem_TEMP_1"]
 darTEMP22 = data42[,"darwinBiochem_TEMP_2"]
@@ -39,14 +40,25 @@ darTEMP32 = data42[,"darwinBiochem_TEMP_3"]
 darTEMP42 = data42[,"darwinBiochem_TEMP_4"]
 darTEMP52 = data42[,"darwinBiochem_TEMP_5"]
 darTEMP62 = data42[,"darwinBiochem_TEMP_6"]
+darTEMP72 = data42[,"darwinBiochem_TEMP_7"]
+darTURB02 = data42[,"darwinBiochem_TURB_0"]
+darTURB12 = data42[,"darwinBiochem_TURB_1"]
+darTURB22 = data42[,"darwinBiochem_TURB_2"]
+darTURB32 = data42[,"darwinBiochem_TURB_3"]
+darTURB42 = data42[,"darwinBiochem_TURB_4"]
+darTURB52 = data42[,"darwinBiochem_TURB_5"]
+darTURB62 = data42[,"darwinBiochem_TURB_6"]
+darTURB72 = data42[,"darwinBiochem_TURB_7"]
 ```
 
 
 
 ```{r}
 WINDSPDall = data.frame(WINDSPD02,WINDSPD12,WINDSPD22,WINDSPD32)
-darCNDCALL = data.frame(darCNDC02,darCNDC12,darCNDC22,darCNDC32,darCNDC42,darCNDC52,darCNDC62)
-darTEMPALL = data.frame(darTEMP02,darTEMP12,darTEMP22,darTEMP32,darTEMP42,darTEMP52,darTEMP62)
+darCNDCALL = data.frame(darCNDC02,darCNDC12,darCNDC22,darCNDC32,darCNDC42,darCNDC52,darCNDC62,darCNDC72)
+darTEMPALL = data.frame(darTEMP02,darTEMP12,darTEMP22,darTEMP32,darTEMP42,darTEMP52,darTEMP62,darTEMP72)
+darTURBALL = data.frame(darTURB02,darTURB12,darTURB22,darTURB32,darTURB42,darTURB52,darTURB62,darTURB72)
+
 ```
 
 ```{r}
@@ -93,9 +105,9 @@ crossvalidlm <- function(ts,exog,k,h){
     mod = glm(train~.,data=trainx)
     modt = predict.glm(mod,newdata=testx)
     #error[i+1] = accuracy(modt)[2]
-    #coefnum = sum(order)
-    pred = modt^2
-    tru = test^2
+    coefnum = length(mod$coef)
+    pred = modt
+    tru = test
     #print(length(tsori))
     #print(length(pred1))
     #print(length(tru1))
@@ -105,7 +117,7 @@ crossvalidlm <- function(ts,exog,k,h){
     
     
     #plot.ts(pred,col=2)
-    #plot.ts(tru,col=4)
+    #lines(tru,col=4)
     #plot.ts(tru-pred)
     #print(sum(abs(tru),na.rm=T))
     #print(sum(abs(tru-pred),na.rm=T))
@@ -132,7 +144,7 @@ crossvalidlm <- function(ts,exog,k,h){
 
 ```{r}
 WMAPE <- function(pred,tru){
-  WMAPE = sum(abs(pred-tru),na.rm = T)/sum(abs(tru),na.rm = T)
+  WMAPE = sum(abs(pred-tru),na.rm = T)/sum(tru,na.rm = T)
   return(WMAPE)
 }
 ```
@@ -176,14 +188,21 @@ rootMSE = function(pred,tru){
 
 
 ```{r}
-datalm = data.frame(darCNDCALL)
-WWSHlm = crossvalidlm(sqrt(WWSH2),datalm,5,100)
+datalm = data.frame(WINDSPDall)
+WWSHlm = crossvalidlm(WWSH2,datalm,5,100)
 ```
 
 
 ```{r}
+mean(WWSHlm[,"arsq"])
 mean(WWSHlm[,"WMAPE"])
 mean(WWSHlm[,"rmse"])
+sd(WWSHlm[,"arsq"])
+sd(WWSHlm[,"WMAPE"])
+sd(WWSHlm[,"rmse"])
+bbe = c(mean(WWSHlm[,"arsq"]),mean(WWSHlm[,"WMAPE"]),mean(WWSHlm[,"rmse"]))
+bbc = c(sd(WWSHlm[,"arsq"]),sd(WWSHlm[,"WMAPE"]),sd(WWSHlm[,"rmse"]))
+data.frame(bbe,bbc)
 
 ```
 
@@ -191,8 +210,14 @@ mean(WWSHlm[,"rmse"])
 
 
 ```{r}
-moda = glm(WWSH2~.,data=datalm)
+datalm = data.frame(data2[c(1,2,7)])
+moda = glm(TEMP~.^2,data=datalm)
 ```
+
+```{r}
+moda = glm(TEMP~.,data = data2)
+```
+
 
 ```{r}
 plot(moda)
@@ -201,7 +226,7 @@ summary(moda)
 
 
 ```{r}
-plot(WWSH2,darTEMPALL[,1])
+plot(darTEMP02,darCNDC02)
 cor(x=log(WWSH2+1),y=log(WINDSPDall[,1]+1),use = "complete.obs")
 ```
 

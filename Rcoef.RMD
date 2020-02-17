@@ -22,7 +22,7 @@ head(data42)
 ```{r}
 Rcoef = c()
 for (i in 1:length(data42)){
-  Rcoef[i] = abs(cor(data42[,"darwinWave_WWSH_0"],data42[i],use="pairwise.complete.obs"))
+  Rcoef[i] = abs(cor(data42[,"darwinBiochem_TEMP_0"],data42[i],use="pairwise.complete.obs"))
 }
 ```
 
@@ -32,12 +32,37 @@ Rcoef = data.frame(Rcoef,row.names = colnames(data42))
 ```
 
 
+```{r}
+Rcoef2 = c()
+for (i in 1:length(data2)){
+  Rcoef2[i] = abs(cor(data2[,"TEMP"],data2[i],use="pairwise.complete.obs"))
+}
+```
+
+```{r}
+Rcoef2 = data.frame(Rcoef2,row.names = colnames(data2))
+
+```
 
 
 
 
+```{r}
+setwd("C:/Users/Connor Simpson/Desktop/New folder (2)/r/Rstuff/data2/data3")
+dataccf = read.csv("BiochemWind.csv")
+dataccf = dataccf[-1]
+```
+```{r}
+Rcoefccf = c()
+for (i in 1:length(dataccf)){
+  Rcoefccf[i] = abs(cor(dataccf[,"CNDC"],dataccf[i],use="pairwise.complete.obs"))
+}
+```
 
+```{r}
+Rcoefccf = data.frame(Rcoefccf,row.names = colnames(dataccf))
 
+```
 
 
 
